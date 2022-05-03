@@ -7,11 +7,11 @@ services:
       - docker.env
     volumes:
       - ace-db-data:/var/lib/mysql
-      - $PWD/Database:/ace/Database
-      - $PWD/Scripts/initdb.sh:/docker-entrypoint-initdb.d/1.sh
-      - $PWD/Database/Optional/World/ACE-World-Database-v0.9.250.sql.gz:/docker-entrypoint-initdb.d/2.sql.gz
+      - ./Database:/ace/Database
+      - ./Scripts/initdb.sh:/docker-entrypoint-initdb.d/1.sh
+      - ./Database/Optional/World/ACE-World-Database-v0.9.250.sql.gz:/docker-entrypoint-initdb.d/2.sql.gz
     ports:
-      - "3306:3306/tcp"
+       - "127.0.0.1:3306:3306/tcp"
     restart: unless-stopped
     command: --max_allowed_packet=32505856
     healthcheck:
