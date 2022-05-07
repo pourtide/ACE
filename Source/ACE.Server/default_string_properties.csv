@@ -1,0 +1,10 @@
+Key,Item,Description
+content_folder,Content,for content creators to live edit weenies. defaults to Content folder found in same directory as ACE.Server.dll
+dat_warning_msg,"Your DAT files are incomplete.
+ACEmulator does not support dynamic DAT updating at this time.
+Please visit https://emulator.ac/how-to-play to download the complete DAT files.",Warning message displayed (if show_dat_warning is true) to player if client attempts DAT download from server
+popup_header,Welcome to Asheron's Call!,Welcome message displayed when you log in
+popup_welcome,"To begin your training, speak to the Society Greeter. Walk up to the Society Greeter using the 'W' key, then double-click on her to initiate a conversation.",Welcome message popup in training halls
+popup_welcome_olthoi,Welcome to the Olthoi hive! Be sure to talk to the Olthoi Queen to receive the Olthoi protections granted by the energies of the hive.,Welcome message displayed on the first login for an Olthoi Player
+popup_motd,,Popup message of the day
+server_motd,,Server message of the day

@@ -1,0 +1,16 @@
+Key,Item,Description
+char_delete_time,3600,the amount of time in seconds a deleted character can be restored
+chat_requires_account_time_seconds,0,the amount of time in seconds an account is required to have existed for for global chat privileges
+chat_requires_player_age,0,the amount of time in seconds a player is required to have played for global chat privileges
+chat_requires_player_level,1,the level a player is required to have for global chat privileges
+corpse_spam_limit,5,the number of corpses a player is allowed to leave on a landblock at one time
+default_subscription_level,3,"retail defaults to 1, 1 = standard subscription (same as 2 and 3), 4 grants ToD pre-order bonus item Asheron's Benediction"
+fellowship_even_share_level,20,level when fellowship XP sharing is no longer restricted
+mansion_min_rank,1,overrides the default allegiance rank required to own a mansion
+max_chars_per_account,15,"retail defaults to 11, client supports up to 20"
+pk_timer,20,the number of seconds where a player cannot perform certain actions (ie. teleporting) after becoming involved in a PK battle
+player_save_interval,300,the number of seconds between automatic player saves
+rares_max_days_between,5,for rares_real_time_v2: the maximum number of days a player can go before a rare is generated on rare eligible creature kills
+rares_max_seconds_between,5256000,for rares_real_time: the maximum number of seconds a player can go before a second chance at a rare is allowed on rare eligible creature kills that did not generate a rare
+summoning_killtask_multicredit_cap,2,"if allow_summoning_killtask_multicredit is enabled, the maximum # of killtask credits a player can receive from 1 kill"
+teleport_visibility_fix,0,"Fixes some possible issues with invisible players and mobs. 0 = default / disabled, 1 = players only, 2 = creatures, 3 = all world objects"

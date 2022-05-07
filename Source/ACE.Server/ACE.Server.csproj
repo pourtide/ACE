@@ -247,16 +247,16 @@
   </ItemGroup>
 
   <ItemGroup>
-      <None Update="Config\default_bool_properties.csv">
+      <None Update="default_bool_properties.csv">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="Config\default_double_properties.csv">
+      <None Update="default_double_properties.csv">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="Config\default_long_properties.csv">
+      <None Update="default_long_properties.csv">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="Config\default_string_properties.csv">
+      <None Update="default_string_properties.csv">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     <None Update="Config.js.docker">
