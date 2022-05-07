@@ -501,11 +501,10 @@ namespace ACE.Server.Managers
         public static void LoadCSVProperties()
         {
             string currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string configDirectory = Path.Combine(currentDirectory, "Config");
-            string boolPath = Path.Combine(configDirectory, "default_bool_properties.csv");
-            string stringPath = Path.Combine(configDirectory, "default_string_properties.csv");
-            string longPath = Path.Combine(configDirectory, "default_long_properties.csv");
-            string doublePath = Path.Combine(configDirectory, "default_double_properties.csv");
+            string boolPath = Path.Combine("default_bool_properties.csv");
+            string stringPath = Path.Combine("default_string_properties.csv");
+            string longPath = Path.Combine("default_long_properties.csv");
+            string doublePath = Path.Combine("default_double_properties.csv");
 
             var boolProperties = GetCSVProperties<bool>(boolPath);
             var stringProperties = GetCSVProperties<string>(stringPath);
