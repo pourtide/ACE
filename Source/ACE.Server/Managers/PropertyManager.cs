@@ -8,6 +8,10 @@ using System.Timers;
 using log4net;
 
 using ACE.Database;
+using System.IO;
+using CsvHelper;
+using System.Globalization;
+using System.Reflection;
 
 namespace ACE.Server.Managers
 {
@@ -31,7 +35,11 @@ namespace ACE.Server.Managers
         public static void Initialize(bool loadDefaultValues = true)
         {
             if (loadDefaultValues)
+            {
+
                 DefaultPropertyManager.LoadDefaultProperties();
+                DefaultPropertyManager.LoadCSVProperties();
+            }
 
             LoadPropertiesFromDB();
 
@@ -372,7 +380,7 @@ namespace ACE.Server.Managers
 
             // first, check for variables updated on the server-side. Write those to the DB.
             // then, compare variables to DB and update from DB as necessary. (needs to minimize r/w)
-            
+
             WriteBoolToDB();
             WriteLongToDB();
             WriteDoubleToDB();
@@ -417,6 +425,14 @@ namespace ACE.Server.Managers
         public string Description { get; }
     }
 
+    public class CSVProperty<T>
+    {
+        public string Key { set; get; }
+        public T Item { set; get; }
+
+        public string Description { set; get; }
+    }
+
     class ConfigurationEntry<T>
     {
         public bool Modified;
@@ -456,7 +472,8 @@ namespace ACE.Server.Managers
 
     public static class DefaultPropertyManager
     {
-        private static ReadOnlyDictionary<A,V> DictOf<A, V>()
+
+        private static ReadOnlyDictionary<A, V> DictOf<A, V>()
         {
             return new ReadOnlyDictionary<A, V>(new Dictionary<A, V>());
         }
@@ -468,6 +485,51 @@ namespace ACE.Server.Managers
                 tup => tup.Item1,
                 tup => tup.Item2
             ));
+        }
+
+        private static List<CSVProperty<T>> GetCSVProperties<T>(string path)
+        {
+            using (var reader = new StreamReader(path))
+            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+            {
+                var records = csv.GetRecords<CSVProperty<T>>();
+                return records.ToList();
+
+            }
+        }
+
+        public static void LoadCSVProperties()
+        {
+            string currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string boolPath = Path.Combine("default_bool_properties.csv");
+            string stringPath = Path.Combine("default_string_properties.csv");
+            string longPath = Path.Combine("default_long_properties.csv");
+            string doublePath = Path.Combine("default_double_properties.csv");
+
+            var boolProperties = GetCSVProperties<bool>(boolPath);
+            var stringProperties = GetCSVProperties<string>(stringPath);
+            var longProperties = GetCSVProperties<long>(longPath);
+            var doubleProperties = GetCSVProperties<double>(doublePath);
+
+            foreach (var item in boolProperties)
+            {
+                PropertyManager.ModifyBool(item.Key, item.Item);
+            }
+
+            foreach (var item in longProperties)
+            {
+                PropertyManager.ModifyLong(item.Key, item.Item);
+            }
+
+            foreach (var item in stringProperties)
+            {
+                PropertyManager.ModifyString(item.Key, item.Item);
+            } 
+
+            foreach (var item in doubleProperties)
+            {
+                PropertyManager.ModifyDouble(item.Key, item.Item);
+            }
         }
 
         public static void LoadDefaultProperties()
