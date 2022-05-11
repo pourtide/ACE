@@ -13,8 +13,8 @@ for domain in $domains; do
     "CREATE DATABASE IF NOT EXISTS ace_$domain;
     USE ace_$domain;
     source ${db_base[$domain]};
-    CREATE USER ace_$domain@localhost IDENTIFIED BY '$MYSQL_ROOT_PASSWORD';
-    GRANT ALL PRIVILEGES ON ace_$domain.* TO ace_$domain@localhost;
+    CREATE USER ace_$domain@ IDENTIFIED BY '$MYSQL_ROOT_PASSWORD';
+    GRANT ALL PRIVILEGES ON ace_$domain.* TO ace_$domain@;
     FLUSH PRIVILEGES;"
 done
 echo "** Finished creating default DB and users"
