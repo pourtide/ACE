@@ -92,7 +92,7 @@ show_dot_messages,FALSE,"enabled, shows combat messages for DoT damage ticks. de
 show_first_login_gift,FALSE,"if TRUE, will show on first login that the player earned bonus item (Blackmoor's Favor and/or Asheron's Benediction), disabled by default because msg is kind of odd on an emulator"
 show_mana_conv_bonus_0,TRUE,"if disabled, only shows mana conversion bonus if not zero, during appraisal of casting items"
 smite_uses_takedamage,FALSE,"if enabled, smite applies damage via TakeDamage"
-spellcast_recoil_queue,FALSE,"if true, players can queue the next spell to cast during recoil animation"
+spellcast_recoil_queue,TRUE,"if true, players can queue the next spell to cast during recoil animation"
 spell_projectile_ethereal,FALSE,"broadcasts all spell projectiles as ethereal to clients only, and manually send stop velocity on collision. can fix various issues with client missing target id."
 suicide_instant_death,FALSE,"if enabled, @die command kills player instantly. defaults to disabled, as in retail"
 taboo_table,FALSE,"if enabled, taboo table restricts player names during character creation"
