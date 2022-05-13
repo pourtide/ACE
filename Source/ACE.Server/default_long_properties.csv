@@ -14,3 +14,5 @@ rares_max_days_between,5,for rares_real_time_v2: the maximum number of days a pl
 rares_max_seconds_between,5256000,for rares_real_time: the maximum number of seconds a player can go before a second chance at a rare is allowed on rare eligible creature kills that did not generate a rare
 summoning_killtask_multicredit_cap,2,"if allow_summoning_killtask_multicredit is enabled, the maximum # of killtask credits a player can receive from 1 kill"
 teleport_visibility_fix,0,"Fixes some possible issues with invisible players and mobs. 0 = default / disabled, 1 = players only, 2 = creatures, 3 = all world objects"
+windup_turn_retry_number,0,"Fixes turning forever during windup. 0 = default / disabled, 1 = retry one time, 2 = retry two times, ..."
+pvp_damage_cap,450,The cap for PvP damage per strike

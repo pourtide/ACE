@@ -77,6 +77,36 @@ namespace ACE.Server.Managers
 
             }
         }
+
+        private static void WriteCSVProperties<T>(String path, ReadOnlyDictionary<string, Property<T>> properties)
+        {
+            using (var writer = new StreamWriter(path))
+            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            {
+                csv.WriteRecords(properties);
+            }
+        }
+
+        
+        /// <TODO>
+        ///  refactor saving and loading csv properties to keep it DRY
+        /// </TODO>
+        private static void SaveCSVProperties()
+        {
+            string currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string boolPath = Path.Combine(currentDirectory, "default_bool_properties.csv");
+            string stringPath = Path.Combine(currentDirectory, "default_string_properties.csv");
+            string longPath = Path.Combine(currentDirectory, "default_long_properties.csv");
+            string doublePath = Path.Combine(currentDirectory, "default_double_properties.csv");
+
+            WriteCSVProperties(stringPath, DefaultPropertyManager.DefaultStringProperties);
+            WriteCSVProperties(longPath, DefaultPropertyManager.DefaultLongProperties);
+            WriteCSVProperties(boolPath, DefaultPropertyManager.DefaultBooleanProperties);
+            WriteCSVProperties(doublePath, DefaultPropertyManager.DefaultDoubleProperties);
+            WriteCSVProperties(doublePath, DefaultPropertyManager.DefaultDoubleProperties);
+        }
+
+
         private static void LoadCSVProperties()
         {
             string currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
