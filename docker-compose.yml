@@ -27,8 +27,8 @@ services:
     volumes:
       - ./Dats:/ace/Dats
       - ./Source/ACE.Server/Properties:/ace/Properties
+      - ./Content:/ace/Content
       - ace-config:/ace/Config
-      - ace-content:/ace/Content
       - ace-logs:/ace/Logs
     ports:
       - "9000-9001:9000-9001/udp"
