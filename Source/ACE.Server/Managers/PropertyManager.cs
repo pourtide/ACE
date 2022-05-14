@@ -593,6 +593,51 @@ namespace ACE.Server.Managers
             ));
         }
 
+        private static List<CSVProperty<T>> GetCSVProperties<T>(string path)
+        {
+            using (var reader = new StreamReader(path))
+            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+            {
+                var records = csv.GetRecords<CSVProperty<T>>();
+                return records.ToList();
+
+            }
+        }
+
+        public static void LoadCSVProperties()
+        {
+            string currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string boolPath = Path.Combine("default_bool_properties.csv");
+            string stringPath = Path.Combine("default_string_properties.csv");
+            string longPath = Path.Combine("default_long_properties.csv");
+            string doublePath = Path.Combine("default_double_properties.csv");
+
+            var boolProperties = GetCSVProperties<bool>(boolPath);
+            var stringProperties = GetCSVProperties<string>(stringPath);
+            var longProperties = GetCSVProperties<long>(longPath);
+            var doubleProperties = GetCSVProperties<double>(doublePath);
+
+            foreach (var item in boolProperties)
+            {
+                PropertyManager.ModifyBool(item.Key, item.Item);
+            }
+
+            foreach (var item in longProperties)
+            {
+                PropertyManager.ModifyLong(item.Key, item.Item);
+            }
+
+            foreach (var item in stringProperties)
+            {
+                PropertyManager.ModifyString(item.Key, item.Item);
+            } 
+
+            foreach (var item in doubleProperties)
+            {
+                PropertyManager.ModifyDouble(item.Key, item.Item);
+            }
+        }
+
         public static void LoadDefaultProperties()
         {
             // Place any default properties to load in here
