@@ -25,6 +25,12 @@ namespace ACE.Server.Managers
         private static readonly ConcurrentDictionary<string, ConfigurationEntry<double>> CachedDoubleSettings = new ConcurrentDictionary<string, ConfigurationEntry<double>>();
         private static readonly ConcurrentDictionary<string, ConfigurationEntry<string>> CachedStringSettings = new ConcurrentDictionary<string, ConfigurationEntry<string>>();
 
+        private static readonly string currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        private static readonly string boolCsvPath = Path.Combine(currentDirectory, "Properties", "bool_properties.csv");
+        private static readonly string stringCsvPath = Path.Combine(currentDirectory, "Properties", "string_properties.csv");
+        private static readonly string longCsvPath = Path.Combine(currentDirectory, "Properties", "long_properties.csv");
+        private static readonly string doubleCsvPath = Path.Combine(currentDirectory, "Properties", "double_properties.csv");
+
         private static Timer _workerThread;
 
         /// <summary>
@@ -34,22 +40,20 @@ namespace ACE.Server.Managers
         /// <param name="loadDefaultValues">Should we use the DefaultPropertyManager to load the default properties for keys?</param>
         public static void Initialize(bool loadDefaultValues = true)
         {
-            if (loadDefaultValues)
-            {
-
-                DefaultPropertyManager.LoadDefaultProperties();
-                DefaultPropertyManager.LoadCSVProperties();
-            }
-
-            LoadPropertiesFromDB();
-
-            if (Program.IsRunningInContainer && !GetString("content_folder").Equals("/ace/Content"))
-                ModifyString("content_folder", "/ace/Content");
-
             _workerThread = new Timer(300000);
             _workerThread.Elapsed += DoWork;
             _workerThread.AutoReset = true;
             _workerThread.Start();
+
+            LoadCSVProperties();
+
+            if (Program.IsRunningInContainer && !GetString("content_folder").Equals("/ace/Content"))
+                ModifyString("content_folder", "/ace/Content");
+
+            //if (loadDefaultValues)
+                //DefaultPropertyManager.LoadDefaultProperties();
+
+            //LoadPropertiesFromDB();
         }
 
 
@@ -70,6 +74,55 @@ namespace ACE.Server.Managers
             foreach (var i in DatabaseManager.ShardConfig.GetAllStrings())
                 CachedStringSettings[i.Key] = new ConfigurationEntry<string>(false, i.Value, i.Description);
         }
+
+        private static List<CSVProperty<T>> GetCSVProperties<T>(string path)
+        {
+            using (var reader = new StreamReader(path))
+            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+            {
+                var records = csv.GetRecords<CSVProperty<T>>();
+                return records.ToList();
+
+            }
+        }
+
+        private static void WriteCSVProperties<T>(String path, Dictionary<string, Property<T>> properties)
+        {
+            using (var writer = new StreamWriter(path))
+            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            {
+                csv.WriteRecords(properties);
+            }
+        }
+
+        private static void LoadCSVProperties()
+        {
+            var boolProperties = GetCSVProperties<bool>(boolCsvPath);
+            var stringProperties = GetCSVProperties<string>(stringCsvPath);
+            var longProperties = GetCSVProperties<long>(longCsvPath);
+            var doubleProperties = GetCSVProperties<double>(doubleCsvPath);
+
+            foreach (var item in boolProperties)
+            {
+                PropertyManager.ModifyBool(item.Key, item.Item);
+            }
+
+            foreach (var item in longProperties)
+            {
+                PropertyManager.ModifyLong(item.Key, item.Item);
+            }
+
+            foreach (var item in stringProperties)
+            {
+                PropertyManager.ModifyString(item.Key, item.Item);
+            } 
+
+            foreach (var item in doubleProperties)
+            {
+                PropertyManager.ModifyDouble(item.Key, item.Item);
+            }
+        }
+
 
         /// <summary>
         /// Resyncs the variables with the database manually.
@@ -137,6 +190,8 @@ namespace ACE.Server.Managers
             else
                 CachedBooleanSettings[key] = new ConfigurationEntry<bool>(true, newVal, DefaultPropertyManager.DefaultBooleanProperties[key].Description);
 
+            ResyncVariables();
+
             return true;
         }
 
@@ -187,6 +242,9 @@ namespace ACE.Server.Managers
                 CachedLongSettings[key].Modify(newVal);
             else
                 CachedLongSettings[key] = new ConfigurationEntry<long>(true, newVal, DefaultPropertyManager.DefaultLongProperties[key].Description);
+
+            ResyncVariables();
+
             return true;
         }
 
@@ -251,6 +309,9 @@ namespace ACE.Server.Managers
                         break;
                 }
             }
+
+            ResyncVariables();
+
             return true;
         }
 
@@ -301,6 +362,9 @@ namespace ACE.Server.Managers
                 CachedStringSettings[key].Modify(newVal);
             else
                 CachedStringSettings[key] = new ConfigurationEntry<string>(true, newVal, DefaultPropertyManager.DefaultStringProperties[key].Description);
+
+            ResyncVariables();
+
             return true;
         }
 
@@ -318,14 +382,23 @@ namespace ACE.Server.Managers
         /// </summary>
         private static void WriteBoolToDB()
         {
+            bool modified = false;
+
             foreach (var i in CachedBooleanSettings.Where(r => r.Value.Modified))
             {
+                modified = true;
                 // this probably should be upsert. This does 2 queries per modified datapoint.
                 // perhaps run a transaction to queue all the queries at once.
                 if (DatabaseManager.ShardConfig.BoolExists(i.Key))
                     DatabaseManager.ShardConfig.SaveBool(new Database.Models.Shard.ConfigPropertiesBoolean { Key = i.Key, Value = i.Value.Item, Description = i.Value.Description });
                 else
                     DatabaseManager.ShardConfig.AddBool(i.Key, i.Value.Item, i.Value.Description);
+            }
+
+            if (modified)
+            {
+                var mappedDictionary = CachedBooleanSettings.ToDictionary(r => r.Key, r => new Property<bool>(r.Value.Item, r.Value.Description));
+                WriteCSVProperties<bool>(boolCsvPath, mappedDictionary);
             }
         }
 
@@ -334,13 +407,22 @@ namespace ACE.Server.Managers
         /// </summary>
         private static void WriteLongToDB()
         {
+            bool modified = false;
+
             foreach (var i in CachedLongSettings.Where(r => r.Value.Modified))
             {
+                modified = true;
                 // todo: see boolean section for caveat in this approach
                 if (DatabaseManager.ShardConfig.LongExists(i.Key))
                     DatabaseManager.ShardConfig.SaveLong(new Database.Models.Shard.ConfigPropertiesLong { Key = i.Key, Value = i.Value.Item, Description = i.Value.Description });
                 else
                     DatabaseManager.ShardConfig.AddLong(i.Key, i.Value.Item, i.Value.Description);
+            }
+
+            if (modified)
+            {
+                var mappedDictionary = CachedLongSettings.ToDictionary(r => r.Key, r => new Property<long>(r.Value.Item, r.Value.Description));
+                WriteCSVProperties<long>(longCsvPath, mappedDictionary);
             }
         }
 
@@ -349,14 +431,27 @@ namespace ACE.Server.Managers
         /// </summary>
         private static void WriteDoubleToDB()
         {
+            bool modified = false;
+
             foreach (var i in CachedDoubleSettings.Where(r => r.Value.Modified))
             {
+                modified = true;
                 // todo: see boolean section for caveat in this approach
                 if (DatabaseManager.ShardConfig.DoubleExists(i.Key))
                     DatabaseManager.ShardConfig.SaveDouble(new Database.Models.Shard.ConfigPropertiesDouble { Key = i.Key, Value = i.Value.Item, Description = i.Value.Description });
                 else
                     DatabaseManager.ShardConfig.AddDouble(i.Key, i.Value.Item, i.Value.Description);
             }
+
+            // Only write to csv file if a value has been modified.
+            if (modified)
+            {
+                var mappedDictionary = CachedDoubleSettings.ToDictionary(r => r.Key, r => new Property<double>(r.Value.Item, r.Value.Description));
+                WriteCSVProperties<double>(doubleCsvPath, mappedDictionary);
+            }
+
+
+
         }
 
         /// <summary>
@@ -364,14 +459,25 @@ namespace ACE.Server.Managers
         /// </summary>
         private static void WriteStringToDB()
         {
+            bool modified = false;
+
             foreach (var i in CachedStringSettings.Where(r => r.Value.Modified))
             {
+                modified = true;
                 // todo: see boolean section for caveat in this approach
                 if (DatabaseManager.ShardConfig.StringExists(i.Key))
                     DatabaseManager.ShardConfig.SaveString(new Database.Models.Shard.ConfigPropertiesString { Key = i.Key, Value = i.Value.Item, Description = i.Value.Description });
                 else
                     DatabaseManager.ShardConfig.AddString(i.Key, i.Value.Item, i.Value.Description);
             }
+
+            // Only write to csv file if a value has been modified.
+            if (modified)
+            {
+                var mappedDictionary = CachedStringSettings.ToDictionary(r => r.Key, r => new Property<string>(r.Value.Item, r.Value.Description));
+                WriteCSVProperties<string>(stringCsvPath, mappedDictionary);
+            }
+
         }
 
         private static void DoWork(Object source, ElapsedEventArgs e)
@@ -685,7 +791,9 @@ namespace ACE.Server.Managers
                 ("rares_max_days_between", new Property<long>(45, "for rares_real_time_v2: the maximum number of days a player can go before a rare is generated on rare eligible creature kills")),
                 ("rares_max_seconds_between", new Property<long>(5256000, "for rares_real_time: the maximum number of seconds a player can go before a second chance at a rare is allowed on rare eligible creature kills that did not generate a rare")),
                 ("summoning_killtask_multicredit_cap", new Property<long>(2, "if allow_summoning_killtask_multicredit is enabled, the maximum # of killtask credits a player can receive from 1 kill")),
-                ("teleport_visibility_fix", new Property<long>(0, "Fixes some possible issues with invisible players and mobs. 0 = default / disabled, 1 = players only, 2 = creatures, 3 = all world objects"))
+                ("teleport_visibility_fix", new Property<long>(0, "Fixes some possible issues with invisible players and mobs. 0 = default / disabled, 1 = players only, 2 = creatures, 3 = all world objects")),
+                ("windup_turn_retry_number", new Property<long>(0, "Fixes turning forever during windup. 0 = default / disabled, 1 = retry one time, 2 = retry two times, ...")),
+                ("pvp_damage_cap", new Property<long>(450, "The cap for PvP damage per strike"))
                 );
 
         public static readonly ReadOnlyDictionary<string, Property<double>> DefaultDoubleProperties =
@@ -721,7 +829,66 @@ namespace ACE.Server.Managers
                 ("vitae_penalty", new Property<double>(0.05, "the amount of vitae penalty a player gets per death")),
                 ("vitae_penalty_max", new Property<double>(0.40, "the maximum vitae penalty a player can have")),
                 ("void_pvp_modifier", new Property<double>(0.5, "Scales the amount of damage players take from Void Magic. Defaults to 0.5, as per retail. For earlier content where DRR isn't as readily available, this can be adjusted for balance.")),
-                ("xp_modifier", new Property<double>(1.0, "scales the amount of xp received by players"))
+                ("xp_modifier", new Property<double>(1.0, "scales the amount of xp received by players")),
+                ("spell_damage_modifier", new Property<double>(1.0, "")),
+                ("war_streak_spell_damage_modifier", new Property<double>(1.0, "")),
+                ("void_streak_spell_damage_modifier", new Property<double>(1.0, "")),
+                ("void_projectile_modifier", new Property<double>(1.0, "scales void projectile dmg")),
+                ("imbue_crippling_blow_melee_scalar", new Property<double>(6.0, "Scales the effectiveness of Crippling Blow for melee attacks at roughly max base skill. 1.0 = no effect. 2.0 = double damage on crit at max base skill. 4.0 = 4x damage etc. ACE DEFAULT IS 6.0")),
+                ("imbue_crippling_blow_magic_scalar", new Property<double>(6.0, "Scales the effectiveness of Crippling Blow for magic attacks at roughly max base skill. 1.0 = no effect. 2.0 = double damage on crit at max base skill. 4.0 = 4x damage etc.  ACE DEFAULT IS 6.0")),
+                ("imbue_crippling_blow_missile_scalar", new Property<double>(6.0, "Scales the effectiveness of Crippling Blow for missile attacks at roughly max base skill. 1.0 = no effect. 2.0 = double damage on crit at max base skill. 4.0 = 4x damage etc.  ACE DEFAULT IS 6.0")),
+                ("imbue_critical_strike_magic_scalar", new Property<double>(1.0, "Scales the effectiveness of Critical Strike Imbue for magic attacks at roughly max base skill. 1.0 = default effect. 2.0 = Crit chance double of what the player normally would have with a CS weapon")),
+                ("imbue_critical_strike_melee_scalar", new Property<double>(1.0, "Scales the effectiveness of Critical Strike Imbue for melee attacks at roughly max base skill. 1.0 = default effect. 2.0 = Crit chance double of what the player normally would have with a CS weapon")),
+                ("imbue_critical_strike_missile_scalar", new Property<double>(1.0, "Scales the effectiveness of Critical Strike Imbue for missile attacks at roughly max base skill. 1.0 = default effect. 2.0 = Crit chance double of what the player normally would have with a CS weapon")),
+                ("pvp_melee_weapon_damage_modifier", new Property<double>(1.0, "Scales melee weapon damage for PvP")),
+                ("pvp_missile_weapon_damage_modifier", new Property<double>(1.0, "Scales missile weapon damage for PvP")),
+                ("consumable_speed_modifier", new Property<double>(1.0, "Scales consumable animation speed. Allows players to eat or drink at a faster rate if set to a higher number.")),
+                ("cloak_max_proc_rate", new Property<double>(25.0, "Cap cloak proc chance to this percentage (100.0 will effectively use the standard ACE proc rate).")),               
+                ("xbow_cb_crit_rate", new Property<double>(0.05, "The amount that an xbow with Crippling Blow will land a critical strike. Default is 0.05(5%). A value of 1.00 would be 100% crit strike chance. be CAREFUL")),
+                ("bow_cb_crit_rate", new Property<double>(0.05, "The amount that a bow with Crippling Blow will land a critical strike. Default is 0.05(5%). A value of 1.00 would be 100% crit strike chance. be CAREFUL")),
+                ("thrown_cb_crit_rate", new Property<double>(0.05, "The amount that a thrown weapon with Crippling Blow will land a critical strike. Default is 0.05(5%). A value of 1.00 would be 100% crit strike chance. be CAREFUL")),
+
+                // CB Multiplier Properties.
+                ("heavy_cb_damage", new Property<double>(0, "The extra crit rating Heavy Weapons will get when imbued with CB. For every 1.0 added to this number, this equals 100 crit rating.")),
+                ("light_cb_damage", new Property<double>(0, "The extra crit rating Light Weapons will get when imbued with CB. For every 1.0 added to this number, this equals 100 crit rating.")),
+                ("finesse_cb_damage", new Property<double>(0, "The extra crit rating Finesse Weapons will get when imbued with CB. For every 1.0 added to this number, this equals 100 crit rating.")),
+                ("twohanded_cb_damage", new Property<double>(0, "The extra crit rating Two-Handed Weapons will get when imbued with CB. For every 1.0 added to this number, this equals 100 crit rating.")),
+
+                ("xbow_cb_damage", new Property<double>(0, "The extra crit rating Crossbow will get when imbued with CB. For every 1.0 added to this number, this equals 100 crit rating.")),
+                ("bow_cb_damage", new Property<double>(0, "The extra crit rating Bow will get when imbued with CB. For every 1.0 added to this number, this equals 100 crit rating.")),
+                ("thrown_cb_damage", new Property<double>(0, "The extra crit rating Thrown Weapons will get when imbued with CB. For every 1.0 added to this number, this equals 100 crit rating.")),
+
+
+                // CB Critical Strike Chance Modifiers
+                ("heavy_cb_crit_rate", new Property<double>(0.05, "The amount that a heavy weapon with Crippling Blow will land a critical strike. Default is 0.05(5%). A value of 1.00 would be 100% crit strike chance. be CAREFUL")),
+                ("light_cb_crit_rate", new Property<double>(0.05, "The amount that a light weapon with Crippling Blow will land a critical strike. Default is 0.05(5%). A value of 1.00 would be 100% crit strike chance. be CAREFUL")),
+                ("finesse_cb_crit_rate", new Property<double>(0.05, "The amount that a finesse weapon with Crippling Blow will land a critical strike. Default is 0.05(5%). A value of 1.00 would be 100% crit strike chance. be CAREFUL")),
+                ("twohanded_cb_crit_rate", new Property<double>(0.05, "The amount that a twohanded weapon with Crippling Blow will land a critical strike. Default is 0.05(5%). A value of 1.00 would be 100% crit strike chance. be CAREFUL")),
+
+                // CS Critical Multiplier Properties
+                ("heavy_cs_damage", new Property<double>(0, "The extra crit rating Heavy Weapons will get when imbued with CS. For every 1.0 added to this number, this equals 100 crit rating.")),
+                ("light_cs_damage", new Property<double>(0, "The extra crit rating Light Weapons will get when imbued with CS. For every 1.0 added to this number, this equals 100 crit rating.")),
+                ("finesse_cs_damage", new Property<double>(0, "The extra crit rating Finesse Weapons will get when imbued with CS. For every 1.0 added to this number, this equals 100 crit rating.")),
+                ("twohanded_cs_damage", new Property<double>(0, "The extra crit rating Two-Handed Weapons will get when imbued with CS. For every 1.0 added to this number, this equals 100 crit rating.")),
+
+                ("xbow_cs_damage", new Property<double>(0, "The extra crit rating Crossbow will get when imbued with CS. For every 1.0 added to this number, this equals 100 crit rating.")),
+                ("bow_cs_damage", new Property<double>(0, "The extra crit rating Bow will get when imbued with CS. For every 1.0 added to this number, this equals 100 crit rating.")),
+                ("thrown_cs_damage", new Property<double>(0, "The extra crit rating Thrown Weapons will get when imbued with CS. For every 1.0 added to this number, this equals 100 crit rating.")),
+
+                ("heavy_weapons_damage", new Property<double>(0, "The amount of flat damage added to heavy weapons per tink. Note for each damage event the added damage will be randomized between 1 and this value. Default is 0.")),
+                ("light_weapons_damage", new Property<double>(0, "The amount of flat damage added to light weapons per tink. Note for each damage event the added damage will be randomized between 1 and this value. Default is 0.")),
+                ("finesse_weapons_damage", new Property<double>(0, "The amount of flat damage added to finesse weapons per tink. Note for each damage event the added damage will be randomized between 1 and this value. Default is 0.")),
+                ("twohanded_damage", new Property<double>(0, "The amount of flat damage added to twohanded weapons per tink. Note for each damage event the added damage will be randomized between 1 and this value. Default is 0.")),
+
+                ("xbow_damage", new Property<double>(0, "The amount of flat damage added to xbow weapons per tink. Note for each damage event the added damage will be randomized between 1 and this value. Default is 0.")),
+                ("bow_damage", new Property<double>(0, "The amount of flat damage added to bow weapons per tink. Note for each damage event the added damage will be randomized between 1 and this value. Default is 0.")),
+                ("thrown_damage", new Property<double>(0, "The amount of flat damage added to thrown weapons per tink. Note for each damage event the added damage will be randomized between 1 and this value. Default is 0.")),
+
+                ("pvp_ar_melee_cap", new Property<double>(0.6, "The cap on what proportion of armor can be reduced on melee AR. Should be between 0 and 1. Default is 0.6 for a 60% reduction in armor.")),
+                ("pvp_ar_missile_cap", new Property<double>(0.6, "The cap on what proportion of armor can be reduced on missile AR. Should be between 0 and 1. Default is 0.6 for a 60% reduction in armor.")),
+
+                ("phantom_shield_damage_multi", new Property<double>(1.0, "The damage multiplier done by phantom weapons vs shields. Default is 1.0x")),
+                ("phantom_damage_multi", new Property<double>(1.0, "The damage multiplier done by phantom weapons vs armor. Default is 1.0x"))
                 );
 
         public static readonly ReadOnlyDictionary<string, Property<string>> DefaultStringProperties =
