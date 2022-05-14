@@ -26,6 +26,7 @@ services:
       - docker.env
     volumes:
       - ./Dats:/ace/Dats
+      - ./Source/ACE.Server/Properties:/ace/Properties
       - ace-config:/ace/Config
       - ace-content:/ace/Content
       - ace-logs:/ace/Logs

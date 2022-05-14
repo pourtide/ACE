@@ -25,6 +25,12 @@ namespace ACE.Server.Managers
         private static readonly ConcurrentDictionary<string, ConfigurationEntry<double>> CachedDoubleSettings = new ConcurrentDictionary<string, ConfigurationEntry<double>>();
         private static readonly ConcurrentDictionary<string, ConfigurationEntry<string>> CachedStringSettings = new ConcurrentDictionary<string, ConfigurationEntry<string>>();
 
+        private static readonly string currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        private static readonly string boolCsvPath = Path.Combine(currentDirectory, "Properties", "bool_properties.csv");
+        private static readonly string stringCsvPath = Path.Combine(currentDirectory, "Properties", "string_properties.csv");
+        private static readonly string longCsvPath = Path.Combine(currentDirectory, "Properties", "long_properties.csv");
+        private static readonly string doubleCsvPath = Path.Combine(currentDirectory, "Properties", "double_properties.csv");
+
         private static Timer _workerThread;
 
         /// <summary>
@@ -34,19 +40,20 @@ namespace ACE.Server.Managers
         /// <param name="loadDefaultValues">Should we use the DefaultPropertyManager to load the default properties for keys?</param>
         public static void Initialize(bool loadDefaultValues = true)
         {
-            if (loadDefaultValues)
-                DefaultPropertyManager.LoadDefaultProperties();
+            _workerThread = new Timer(300000);
+            _workerThread.Elapsed += DoWork;
+            _workerThread.AutoReset = true;
+            _workerThread.Start();
 
-            LoadPropertiesFromDB();
             LoadCSVProperties();
 
             if (Program.IsRunningInContainer && !GetString("content_folder").Equals("/ace/Content"))
                 ModifyString("content_folder", "/ace/Content");
 
-            _workerThread = new Timer(300000);
-            _workerThread.Elapsed += DoWork;
-            _workerThread.AutoReset = true;
-            _workerThread.Start();
+            //if (loadDefaultValues)
+                //DefaultPropertyManager.LoadDefaultProperties();
+
+            //LoadPropertiesFromDB();
         }
 
 
@@ -67,6 +74,7 @@ namespace ACE.Server.Managers
             foreach (var i in DatabaseManager.ShardConfig.GetAllStrings())
                 CachedStringSettings[i.Key] = new ConfigurationEntry<string>(false, i.Value, i.Description);
         }
+
         private static List<CSVProperty<T>> GetCSVProperties<T>(string path)
         {
             using (var reader = new StreamReader(path))
@@ -78,7 +86,7 @@ namespace ACE.Server.Managers
             }
         }
 
-        private static void WriteCSVProperties<T>(String path, ReadOnlyDictionary<string, Property<T>> properties)
+        private static void WriteCSVProperties<T>(String path, Dictionary<string, Property<T>> properties)
         {
             using (var writer = new StreamWriter(path))
             using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
@@ -87,38 +95,12 @@ namespace ACE.Server.Managers
             }
         }
 
-        
-        /// <TODO>
-        ///  refactor saving and loading csv properties to keep it DRY
-        /// </TODO>
-        private static void SaveCSVProperties()
-        {
-            string currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string boolPath = Path.Combine(currentDirectory, "default_bool_properties.csv");
-            string stringPath = Path.Combine(currentDirectory, "default_string_properties.csv");
-            string longPath = Path.Combine(currentDirectory, "default_long_properties.csv");
-            string doublePath = Path.Combine(currentDirectory, "default_double_properties.csv");
-
-            WriteCSVProperties(stringPath, DefaultPropertyManager.DefaultStringProperties);
-            WriteCSVProperties(longPath, DefaultPropertyManager.DefaultLongProperties);
-            WriteCSVProperties(boolPath, DefaultPropertyManager.DefaultBooleanProperties);
-            WriteCSVProperties(doublePath, DefaultPropertyManager.DefaultDoubleProperties);
-            WriteCSVProperties(doublePath, DefaultPropertyManager.DefaultDoubleProperties);
-        }
-
-
         private static void LoadCSVProperties()
         {
-            string currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string boolPath = Path.Combine(currentDirectory, "default_bool_properties.csv");
-            string stringPath = Path.Combine(currentDirectory, "default_string_properties.csv");
-            string longPath = Path.Combine(currentDirectory, "default_long_properties.csv");
-            string doublePath = Path.Combine(currentDirectory, "default_double_properties.csv");
-
-            var boolProperties = GetCSVProperties<bool>(boolPath);
-            var stringProperties = GetCSVProperties<string>(stringPath);
-            var longProperties = GetCSVProperties<long>(longPath);
-            var doubleProperties = GetCSVProperties<double>(doublePath);
+            var boolProperties = GetCSVProperties<bool>(boolCsvPath);
+            var stringProperties = GetCSVProperties<string>(stringCsvPath);
+            var longProperties = GetCSVProperties<long>(longCsvPath);
+            var doubleProperties = GetCSVProperties<double>(doubleCsvPath);
 
             foreach (var item in boolProperties)
             {
@@ -208,6 +190,8 @@ namespace ACE.Server.Managers
             else
                 CachedBooleanSettings[key] = new ConfigurationEntry<bool>(true, newVal, DefaultPropertyManager.DefaultBooleanProperties[key].Description);
 
+            ResyncVariables();
+
             return true;
         }
 
@@ -258,6 +242,9 @@ namespace ACE.Server.Managers
                 CachedLongSettings[key].Modify(newVal);
             else
                 CachedLongSettings[key] = new ConfigurationEntry<long>(true, newVal, DefaultPropertyManager.DefaultLongProperties[key].Description);
+
+            ResyncVariables();
+
             return true;
         }
 
@@ -322,6 +309,9 @@ namespace ACE.Server.Managers
                         break;
                 }
             }
+
+            ResyncVariables();
+
             return true;
         }
 
@@ -372,6 +362,9 @@ namespace ACE.Server.Managers
                 CachedStringSettings[key].Modify(newVal);
             else
                 CachedStringSettings[key] = new ConfigurationEntry<string>(true, newVal, DefaultPropertyManager.DefaultStringProperties[key].Description);
+
+            ResyncVariables();
+
             return true;
         }
 
@@ -389,14 +382,23 @@ namespace ACE.Server.Managers
         /// </summary>
         private static void WriteBoolToDB()
         {
+            bool modified = false;
+
             foreach (var i in CachedBooleanSettings.Where(r => r.Value.Modified))
             {
+                modified = true;
                 // this probably should be upsert. This does 2 queries per modified datapoint.
                 // perhaps run a transaction to queue all the queries at once.
                 if (DatabaseManager.ShardConfig.BoolExists(i.Key))
                     DatabaseManager.ShardConfig.SaveBool(new Database.Models.Shard.ConfigPropertiesBoolean { Key = i.Key, Value = i.Value.Item, Description = i.Value.Description });
                 else
                     DatabaseManager.ShardConfig.AddBool(i.Key, i.Value.Item, i.Value.Description);
+            }
+
+            if (modified)
+            {
+                var mappedDictionary = CachedBooleanSettings.ToDictionary(r => r.Key, r => new Property<bool>(r.Value.Item, r.Value.Description));
+                WriteCSVProperties<bool>(boolCsvPath, mappedDictionary);
             }
         }
 
@@ -405,13 +407,22 @@ namespace ACE.Server.Managers
         /// </summary>
         private static void WriteLongToDB()
         {
+            bool modified = false;
+
             foreach (var i in CachedLongSettings.Where(r => r.Value.Modified))
             {
+                modified = true;
                 // todo: see boolean section for caveat in this approach
                 if (DatabaseManager.ShardConfig.LongExists(i.Key))
                     DatabaseManager.ShardConfig.SaveLong(new Database.Models.Shard.ConfigPropertiesLong { Key = i.Key, Value = i.Value.Item, Description = i.Value.Description });
                 else
                     DatabaseManager.ShardConfig.AddLong(i.Key, i.Value.Item, i.Value.Description);
+            }
+
+            if (modified)
+            {
+                var mappedDictionary = CachedLongSettings.ToDictionary(r => r.Key, r => new Property<long>(r.Value.Item, r.Value.Description));
+                WriteCSVProperties<long>(longCsvPath, mappedDictionary);
             }
         }
 
@@ -420,14 +431,27 @@ namespace ACE.Server.Managers
         /// </summary>
         private static void WriteDoubleToDB()
         {
+            bool modified = false;
+
             foreach (var i in CachedDoubleSettings.Where(r => r.Value.Modified))
             {
+                modified = true;
                 // todo: see boolean section for caveat in this approach
                 if (DatabaseManager.ShardConfig.DoubleExists(i.Key))
                     DatabaseManager.ShardConfig.SaveDouble(new Database.Models.Shard.ConfigPropertiesDouble { Key = i.Key, Value = i.Value.Item, Description = i.Value.Description });
                 else
                     DatabaseManager.ShardConfig.AddDouble(i.Key, i.Value.Item, i.Value.Description);
             }
+
+            // Only write to csv file if a value has been modified.
+            if (modified)
+            {
+                var mappedDictionary = CachedDoubleSettings.ToDictionary(r => r.Key, r => new Property<double>(r.Value.Item, r.Value.Description));
+                WriteCSVProperties<double>(doubleCsvPath, mappedDictionary);
+            }
+
+
+
         }
 
         /// <summary>
@@ -435,14 +459,25 @@ namespace ACE.Server.Managers
         /// </summary>
         private static void WriteStringToDB()
         {
+            bool modified = false;
+
             foreach (var i in CachedStringSettings.Where(r => r.Value.Modified))
             {
+                modified = true;
                 // todo: see boolean section for caveat in this approach
                 if (DatabaseManager.ShardConfig.StringExists(i.Key))
                     DatabaseManager.ShardConfig.SaveString(new Database.Models.Shard.ConfigPropertiesString { Key = i.Key, Value = i.Value.Item, Description = i.Value.Description });
                 else
                     DatabaseManager.ShardConfig.AddString(i.Key, i.Value.Item, i.Value.Description);
             }
+
+            // Only write to csv file if a value has been modified.
+            if (modified)
+            {
+                var mappedDictionary = CachedStringSettings.ToDictionary(r => r.Key, r => new Property<string>(r.Value.Item, r.Value.Description));
+                WriteCSVProperties<string>(stringCsvPath, mappedDictionary);
+            }
+
         }
 
         private static void DoWork(Object source, ElapsedEventArgs e)
