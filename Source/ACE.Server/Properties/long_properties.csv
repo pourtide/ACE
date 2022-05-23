@@ -16,3 +16,5 @@ fellowship_even_share_level,50,level when fellowship XP sharing is no longer res
 summoning_killtask_multicredit_cap,2,"if allow_summoning_killtask_multicredit is enabled, the maximum # of killtask credits a player can receive from 1 kill"
 pk_timer,20,the number of seconds where a player cannot perform certain actions (ie. teleporting) after becoming involved in a PK battle
 pvp_damage_cap,450,The cap for PvP damage per strike
+max_armor_durability,500,"the number of maximum durability points on loot generated armor"
+durability_damage,1,"the amount of durability points reduced per damage taken"
