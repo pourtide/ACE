@@ -793,6 +793,8 @@ namespace ACE.Server.Managers
                 ("summoning_killtask_multicredit_cap", new Property<long>(2, "if allow_summoning_killtask_multicredit is enabled, the maximum # of killtask credits a player can receive from 1 kill")),
                 ("teleport_visibility_fix", new Property<long>(0, "Fixes some possible issues with invisible players and mobs. 0 = default / disabled, 1 = players only, 2 = creatures, 3 = all world objects")),
                 ("windup_turn_retry_number", new Property<long>(0, "Fixes turning forever during windup. 0 = default / disabled, 1 = retry one time, 2 = retry two times, ...")),
+                ("max_armor_durability", new Property<long>(500, "the number of maximum durability points on loot generated armor")),
+                ("durability_damage", new Property<long>(1, "the amount of durability points reduced per damage taken")),
                 ("pvp_damage_cap", new Property<long>(450, "The cap for PvP damage per strike"))
                 );
 

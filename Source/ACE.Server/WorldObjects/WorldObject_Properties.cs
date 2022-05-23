@@ -3074,6 +3074,17 @@ namespace ACE.Server.WorldObjects
             set { if (!value.HasValue) RemoveProperty(PropertyFloat.RotationSpeed); else SetProperty(PropertyFloat.RotationSpeed, value.Value); }
         }
 
+        
+        /// <summary>
+        /// Durability
+        /// </summary>
+        public int? Durability
+        {
+            get => GetProperty(PropertyInt.Durability);
+            set { if (!value.HasValue) RemoveProperty(PropertyInt.Durability); else SetProperty(PropertyInt.Durability, value.Value); }
+        }
+
+
         public bool HasMissileFlightPlacement => CSetup.HasMissileFlightPlacement;
 
         /// <summary>
@@ -3082,5 +3093,9 @@ namespace ACE.Server.WorldObjects
         /// If not unlimited, client will only allow you to buy or add to buy list up this number of items for a single transaction.
         /// </summary>
         public int? VendorShopCreateListStackSize;
+
+
     }
+
+
 }

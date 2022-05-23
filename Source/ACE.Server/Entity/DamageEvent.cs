@@ -320,8 +320,36 @@ namespace ACE.Server.Entity
                 // get player armor pieces
                 Armor = attacker.GetArmorLayers(playerDefender, BodyPart);
 
+                var filteredArmorList = new List<WorldObject>();
+
+                if (pkBattle)
+                {
+                    Armor.ForEach(item =>
+                    {
+                        if (item.Durability.HasValue)
+                        {
+                            item.Durability -= 100;
+                            item.LongDesc = $"Durability: {item.Durability} / 500";
+                            //playerDefender.Session.Network.EnqueueSend(new GameMessageSystemChat($"your {item.Name} lost 1 Durability. {item.Durability}/100", ChatMessageType.System));
+                        }
+
+                        if (item.Durability <= 0)
+                        {
+                            item.Durability = 0;
+                            item.LongDesc = $"Durability: {item.Durability} / 100 (BROKEN)";
+                            playerDefender.HandleActionPutItemInContainer(item.Guid.Full, playerDefender.Guid.Full, 0);
+
+                            //if durability is less than or equal to zero, damage should result in no protection from this item so we don't add it to the filteredArmorList
+                            return;
+                        }
+
+                        filteredArmorList.Add(item);
+                    });
+                }
+
                 // get armor modifiers
-                ArmorMod = attacker.GetArmorMod(playerDefender, DamageType, Armor, Weapon, ignoreArmorMod);
+                ArmorMod = attacker.GetArmorMod(playerDefender, DamageType, filteredArmorList, Weapon, ignoreArmorMod);
+
             }
             else
             {
