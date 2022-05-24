@@ -7,6 +7,7 @@ using ACE.Entity.Enum.Properties;
 using ACE.Entity.Models;
 using ACE.Server.Entity;
 using ACE.Server.Factories;
+using ACE.Server.Managers;
 using ACE.Server.Network.GameEvent.Events;
 using ACE.Server.Network.GameMessages.Messages;
 using ACE.Server.Physics;
@@ -246,6 +247,30 @@ namespace ACE.Server.WorldObjects
                 return;
             }
 
+            // if this is an ArmorRepairKit gem
+            // TODO:
+            // refactor ArmorRepairKit logic to some other class, maybe a Durability Entity class
+            if (WeenieClassId == 3000330)
+            {
+                var durability = target.Durability;
+                var maxArmorDurability = (int)PropertyManager.GetLong("max_armor_durability").Item;
+
+                // if the item isn't underwear and if the item has less than max durability, repair 
+                if (((target.ClothingPriority & (CoverageMask)CoverageMaskHelper.Underwear) == 0) && durability.HasValue && durability.Value < maxArmorDurability)
+                {
+                    target.SetProperty(PropertyInt.Durability, maxArmorDurability);
+                    target.LongDesc = $"Durability: {target.Durability} / {maxArmorDurability}";
+                    player.Session.Player.TryConsumeFromInventoryWithNetworking(3000330, 1);
+                    player.Session.Network.EnqueueSend(new GameMessageSystemChat($"Your armor item [{target.Name}] has been repaired to {target.Durability} / {maxArmorDurability}.", ChatMessageType.System));
+                    player.Session.Player.SendUseDoneEvent();
+                } else
+                {
+                    player.Session.Player.SendUseDoneEvent(WeenieError.IncorrectTargetType);
+                }
+
+                return;
+            }
+
             // fallback on recipe manager?
             base.HandleActionUseOnTarget(player, target);
         }
@@ -266,7 +291,7 @@ namespace ACE.Server.WorldObjects
         public override void OnActivate(WorldObject activator)
         {
             if (ItemUseable == Usable.Contained && activator is Player player)
-            {               
+            {
                 var containedItem = player.FindObject(Guid.Full, Player.SearchLocations.MyInventory | Player.SearchLocations.MyEquippedItems);
                 if (containedItem != null) // item is contained by player
                 {

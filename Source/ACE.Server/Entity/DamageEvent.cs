@@ -322,22 +322,28 @@ namespace ACE.Server.Entity
 
                 var filteredArmorList = new List<WorldObject>();
 
+                var maxDurability = (int)PropertyManager.GetLong("max_armor_durability").Item;
+                var durabilityDamage = (int)PropertyManager.GetLong("durability_damage").Item;
+
                 if (pkBattle)
                 {
                     Armor.ForEach(item =>
                     {
                         if (item.Durability.HasValue)
                         {
-                            item.Durability -= 100;
-                            item.LongDesc = $"Durability: {item.Durability} / 500";
+                            item.Durability -= durabilityDamage;
+                            item.LongDesc = $"Durability: {item.Durability} / {maxDurability}";
                             //playerDefender.Session.Network.EnqueueSend(new GameMessageSystemChat($"your {item.Name} lost 1 Durability. {item.Durability}/100", ChatMessageType.System));
                         }
 
                         if (item.Durability <= 0)
                         {
                             item.Durability = 0;
-                            item.LongDesc = $"Durability: {item.Durability} / 100 (BROKEN)";
+                            item.LongDesc = $"Durability: {item.Durability} / {maxDurability} (BROKEN)";
                             playerDefender.HandleActionPutItemInContainer(item.Guid.Full, playerDefender.Guid.Full, 0);
+                            playerDefender.Session.Network.EnqueueSend(
+                                new GameMessageSystemChat(
+                                    $"Your armor item [{item.Name}] has been destroyed in battle. Purchase an Armor Repair Kit from the Quality of Life Vendor in Arwic to repair this item.", ChatMessageType.System));
 
                             //if durability is less than or equal to zero, damage should result in no protection from this item so we don't add it to the filteredArmorList
                             return;
