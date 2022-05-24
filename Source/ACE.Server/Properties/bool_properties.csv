@@ -1,0 +1,107 @@
+Key,Item,Description
+show_dat_warning,False,"if TRUE, will alert player (dat_warning_msg) when client attempts to download from server and boot them from game, disabled by default"
+chat_log_global,False,log global broadcasts
+creatures_drop_createlist_wield,False,If FALSE then Wielded items in CreateList will not drop. Retail defaulted to TRUE but there are currently data errors
+vendor_shop_uses_generator,False,enables or disables vendors using generator system in addition to createlist to create artificial scarcity
+house_per_char,False,"if TRUE, allows 1 house per char instead of 1 house per account"
+fastbuff,True,"If TRUE, enables the fast buffing trick from retail."
+chat_log_help,False,log help chat
+chat_log_audit,True,log audit chat
+house_purchase_requirements,True,"if disabled, requirements to purchase/rent house are not checked"
+salvage_handle_overages,False,"in retail, if 2 salvage bags were combined beyond 100 structure, the overages would be lost"
+house_hook_limit,True,"if disabled, house hook limits are ignored"
+pkl_server,False,set this to TRUE for pink servers
+creature_name_check,True,"if enabled, creature names in world database restricts player names during character creation"
+house_30day_cooldown,True,"if disabled, houses can be purchased without waiting 30 days between each purchase"
+house_15day_account,True,"if disabled, houses can be purchased with accounts created less than 15 days old"
+advanced_combat_pets,False,"(non-retail function) If enabled, Combat Pets can cast spells"
+trajectory_alt_solver,False,use the alternate trajectory solver for missiles and spell projectiles
+chat_log_lfg,False,log LFG chat
+rares_real_time_v2,False,"chances for a rare to be generated on rare eligible kills are modified by the last time one was found per each player, rares_max_days_between defines maximum days before guaranteed rare generation"
+show_ammo_buff,False,shows active enchantments such as blood drinker on equipped missile ammo during appraisal
+world_closed,False,enable this to startup world as a closed to players world
+account_login_boots_in_use,True,"if FALSE, oldest connection to account is not booted when new connection occurs"
+equipmentsetid_name_decoration,False,enable this to add the EquipmentSet name to loot armor name
+player_receive_immediate_save,False,"if enabled, when the player receives items from an NPC, they will be saved immediately"
+permit_corpse_all,False,"If TRUE, /permit grants permittees access to all corpses of the permitter. Defaults to FALSE as per retail, where /permit only grants access to 1 locked corpse"
+taboo_table,True,"if enabled, taboo table restricts player names during character creation"
+chat_inform_reject,True,global chat informs sender on reason for reject
+lifestone_broadcast_death,True,"if true, player deaths are additionally broadcast to other players standing near the destination lifestone"
+house_hookgroup_limit,True,"if disabled, house hook group limits are ignored"
+container_opener_name,False,"If enabled, when a player tries to open a container that is already in use by someone else, replaces 'someone else' in the message with the actual name of the player"
+client_movement_formula,False,"If enabled, server uses DoMotion/StopMotion self-client movement methods instead of apply_raw_movement"
+house_rent_enabled,True,If FALSE then rent is not required
+chat_echo_reject,False,global chat returns to sender on reject
+chat_disable_olthoi,False,disable olthoi global chat channel
+pk_server,True,set this to TRUE for darktide servers
+chat_disable_trade,False,disable trade global chat channel
+allow_fast_chug,True,enables retail behavior where a player can consume food and drink faster than normal by breaking animation
+chat_log_debug,False,log debug chat
+chat_log_fellow,False,log fellow chat
+npc_hairstyle_fullrange,False,"if TRUE, allows generated creatures to use full range of hairstyles. Retail only allowed first nine (0-8) out of 51"
+chat_log_trade,False,log trade chat
+aetheria_heal_color,False,"If enabled, changes the aetheria healing over time messages from the default retail red color to green"
+pk_server_safe_training_academy,False,set this to TRUE to disable pk fighting in training academy and time to exit starter town safely
+iou_trades,False,"(non-retail function) If enabled, IOUs can be traded for objects that are missing in DB but added/restored later on"
+chat_log_admin,False,log admin chat
+universal_masteries,True,"if TRUE, matches end of retail masteries - players wielding almost any weapon get +5 DR, except if the weapon ""seems tough to master"". if FALSE, players start with mastery of 1 melee and 1 ranged weapon type based on heritage, and can later re-select these 2 masteries"
+equipmentsetid_enabled,True,enable this to allow adding EquipmentSetIDs to loot armor
+chat_log_advocate,False,log advocate chat
+chat_requires_account_15days,False,global chat privileges requires accounts to be 15 days or older
+chat_disable_general,False,disable general global chat channel
+use_generator_rotation_offset,True,enables or disables using the generator's current rotation when offseting relative positions
+reportbug_enabled,False,toggles the /reportbug player command
+chat_log_sentinel,False,log sentinel chat
+rares_real_time,True,"allow for second chance roll based on an rng seeded timestamp for a rare on rare eligible kills that do not generate a rare, rares_max_seconds_between defines maximum seconds before second chance kicks in"
+legacy_loot_system,False,use the previous iteration of the ace lootgen system
+spellcast_recoil_queue,False,"if true, players can queue the next spell to cast during recoil animation"
+runrate_add_hooks,False,"if TRUE, adds some runrate hooks that were missing from retail (exhaustion done, raise skill/attribute"
+loot_quality_mod,True,if FALSE then the loot quality modifier of a Death Treasure profile does not affect loot generation
+suicide_instant_death,False,"if enabled, @die command kills player instantly. defaults to disabled, as in retail"
+pet_stow_replace,False,pet stowing for different pet devices becomes a stow and replace. defaults to retail value of false
+corpse_destroy_pyreals,True,If FALSE then pyreals will not be completely destroyed on player death
+chat_echo_only,False,global chat returns to sender only
+fellow_quest_bonus,False,"if TRUE, applies EvenShare formula to fellowship quest reward XP (300% max bonus, defaults to false in retail)"
+allow_jump_loot,True,"enables retail behavior where a player can quickly loot items while jumping, bypassing the 'crouch down' animation"
+chat_log_allegiance,False,log allegiance chat
+allow_negative_rating_curve,True,"enables retail behavior where negative DRR from void dots didn't switch to the reverse rating formula, resulting in a possibly unintended curve that quickly ramps up as -rating goes down, eventually approaching infinity / divide by 0 for -100 rating. less than -100 rating would produce negative numbers."
+version_info_enabled,False,toggles the /aceversion player command
+corpse_decay_tick_logging,False,If ENABLED then player corpse ticks will be logged
+chat_log_society,False,log society chat
+olthoi_play_enabled,False,allows players to create and play as olthoi characters
+quest_info_enabled,False,toggles the /myquests player command
+chat_log_olthoi,False,log olthoi chat
+chat_log_townchans,False,log advocate town chat
+gateway_ties_summonable,True,"if disabled, players cannot summon ties from gateways. defaults to enabled, as in retail"
+item_dispel,False,"if enabled, allows players to dispel items. defaults to end of retail, where item dispels could only target creatures"
+use_turbine_chat,True,"enables or disables global chat channels (General, LFG, Roleplay, Trade, Olthoi, Society, Allegience)"
+allow_pkl_bump,True,"enables retail behavior where /pkl checks for entry collisions, bumping the player position over if standing on another PKLite. This effectively enables /pkl door skipping from retail"
+chat_disable_lfg,False,disable lfg global chat channel
+player_config_command,False,"If enabled, players can use /config to change their settings via text commands"
+chat_log_roleplay,False,log roleplay chat
+require_spell_comps,True,"if FALSE, spell components are no longer required to be in inventory to cast spells. defaults to enabled, as in retail"
+show_first_login_gift,False,"if TRUE, will show on first login that the player earned bonus item (Blackmoor's Favor and/or Asheron's Benediction), disabled by default because msg is kind of odd on an emulator"
+assess_creature_mod,False,"(non-retail function) If enabled, re-enables former skill formula, when assess creature skill is not trained or spec'ed"
+spell_projectile_ethereal,False,"broadcasts all spell projectiles as ethereal to clients only, and manually send stop velocity on collision. can fix various issues with client missing target id."
+chat_log_general,False,log general chat
+show_mana_conv_bonus_0,True,"if disabled, only shows mana conversion bonus if not zero, during appraisal of casting items"
+allow_negative_dispel_resist,True,enables retail behavior where #-# negative dispels can be resisted
+allow_summoning_killtask_multicredit,True,enables retail behavior where a summoner can get multiple killtask credits from a monster
+chat_log_abuse,False,log abuse chat
+chess_enabled,True,if FALSE then chess will be disabled
+smite_uses_takedamage,False,"if enabled, smite applies damage via TakeDamage"
+tailoring_intermediate_uieffects,False,"If true, tailoring intermediate icons retain the magical/elemental highlight of the original item"
+use_wield_requirements,True,disable this to bypass wield requirements. mostly for dev debugging
+show_aura_buff,False,shows active aura enchantments on wielded items during appraisal
+override_encounter_spawn_rates,False,"if enabled, landblock encounter spawns are overidden by double properties below."
+chat_disable_roleplay,False,disable roleplay global chat channel
+show_dot_messages,False,"enabled, shows combat messages for DoT damage ticks. defaults to disabled, as in retail"
+fellow_kt_landblock,False,"if TRUE, fellowship kill tasks will share with landblock range (192 distance radius, or entire dungeon)"
+chat_log_qa,False,log QA chat
+advocate_fane_auto_bestow,False,"If enabled, Advocate Fane will automatically bestow new advocates to advocate_fane_auto_bestow_level"
+allow_door_hold,True,"enables retail behavior where standing on a door while it is closing keeps the door as ethereal until it is free from collisions, effectively holding the door open for other players"
+safe_spell_comps,False,"if TRUE, disables spell component burning for everyone"
+craft_exact_msg,False,"If TRUE, and player has crafting chance of success dialog enabled, shows them an additional message in their chat window with exact %"
+fellow_kt_killer,True,"if FALSE, fellowship kill tasks will share with the fellowship, even if the killer doesn't have the quest"
+fellow_busy_no_recruit,True,"if FALSE, fellows can be recruited while they are busy, different from retail"
+persist_movement,False,"If TRUE, persists autonomous movements such as turns and sidesteps through non-autonomous server actions. Retail didn't appear to do this, but some players may prefer this."

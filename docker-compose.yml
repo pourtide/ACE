@@ -1,7 +1,8 @@
 version: '3'
 services:
+
   ace-db:
-    image: mysql:5.7
+    image: mariadb:10.6
     container_name: ace-db
     env_file:
       - docker.env
@@ -12,9 +13,9 @@ services:
       - ./Database/Optional/World/ACE-World-Database-v0.9.250.sql.gz:/docker-entrypoint-initdb.d/2.sql.gz
     ports:
       - "127.0.0.1:3306:3306/tcp"
-    #restart: unless-stopped
+        #restart: unless-stopped
     healthcheck:
-        test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
 
   ace-server:
     build: .
@@ -26,16 +27,32 @@ services:
       - docker.env
     volumes:
       - ./Dats:/ace/Dats
+      - ./Source/ACE.Server/Properties:/ace/Properties
+      - ./Content:/ace/Content
       - ace-config:/ace/Config
-      - ace-content:/ace/Content
       - ace-logs:/ace/Logs
     ports:
       - "9000-9001:9000-9001/udp"
-    #restart: unless-stopped
+        #restart: unless-stopped
+
+  ace-backup:
+    image: databack/mysql-backup
+    env_file:
+      - docker.env
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+
+  ace-restore:
+    image: databack/mysql-backup
+    env_file:
+      - docker.env
+    #environment:
+      #- DB_RESTORE_TARGET=s3://pourtide-db-backup/dumps/db_backup_2022-05-21T00:02:25Z.tbz2
+
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
 
 volumes:
-  ace-db-data:
-  ace-config:
-  ace-content:
-  ace-dats:
-  ace-logs:
+   ace-db-data:
+   ace-config:
+   ace-logs:

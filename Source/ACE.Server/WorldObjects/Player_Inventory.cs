@@ -1970,6 +1970,9 @@ namespace ACE.Server.WorldObjects
 
         private WeenieError CheckWieldRequirements(WorldObject item)
         {
+            if (item.Durability <= 0)
+                return WeenieError.YouCannotUseThatItem;
+
             if (!PropertyManager.GetBool("use_wield_requirements").Item)
                 return WeenieError.None;
 

@@ -12,7 +12,6 @@ COPY ./Source/ACE.DatLoader.Tests/*.csproj ./ACE.DatLoader.Tests/
 COPY ./Source/ACE.Entity/*.csproj ./ACE.Entity/
 COPY ./Source/ACE.Server/*.csproj ./ACE.Server/
 COPY ./Source/ACE.Server.Tests/*.csproj ./ACE.Server.Tests/
-COPY ./Source/ACE.Server/*.csv ./ACE.Server/
 
 RUN dotnet restore
 

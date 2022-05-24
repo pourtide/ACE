@@ -158,6 +158,12 @@ namespace ACE.Server.Managers
 
             session.SetPlayer(player);
 
+            if (player.Level == 1)
+            {
+                // If player has just been created, instant level 50 
+                player.EarnXP(55919623, XpType.Kill);
+            }
+
             if (stripAdminProperties) // continue stripping properties
             {
                 player.CloakStatus = CloakStatus.Undef;
