@@ -262,6 +262,7 @@ namespace ACE.Server.WorldObjects
                     target.LongDesc = $"Durability: {target.Durability} / {maxArmorDurability}";
                     player.Session.Player.TryConsumeFromInventoryWithNetworking(3000330, 1);
                     player.Session.Network.EnqueueSend(new GameMessageSystemChat($"Your armor item [{target.Name}] has been repaired to {target.Durability} / {maxArmorDurability}.", ChatMessageType.System));
+                    target.SaveBiotaToDatabase();
                     player.Session.Player.SendUseDoneEvent();
                 } else
                 {
