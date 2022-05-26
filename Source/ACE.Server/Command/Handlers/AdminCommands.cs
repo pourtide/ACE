@@ -815,6 +815,25 @@ namespace ACE.Server.Command.Handlers
             PlayerManager.BroadcastToAuditChannel(session.Player, $"{session.Player.Name} has teleported {player.Name} to them.");
         }
 
+        [CommandHandler("test-spell-animation", AccessLevel.Sentinel, CommandHandlerFlag.RequiresWorld, 2, "Test spell animation on target", "PlayerName SpellId")]
+        public static void TestSpellAnimationOnTarget(Session session, params string[] parameters)
+        {
+            var playerName = parameters[0];
+            var spellId = int.Parse(parameters[1]);
+            var player = PlayerManager.GetOnlinePlayer(playerName);
+            if (player == null)
+            {
+                session.Network.EnqueueSend(new GameMessageSystemChat($"Player {playerName} was not found.", ChatMessageType.Broadcast));
+                return;
+            }
+
+            var spell = new Spell(spellId);
+
+            player.CreateSpellEffects(spell, player, player);
+
+            PlayerManager.BroadcastToAuditChannel(session.Player, $"{session.Player.Name} has tested spell animation for {spell.Name} on {player.Name}.");
+        }
+
         /// <summary>
         /// Teleports a player to their previous position
         /// </summary>

@@ -637,6 +637,18 @@ namespace ACE.Server.WorldObjects
             ForcedLogOffRequested = false;
         }
 
+        /// <summary>
+        /// Create a spell effect animation on a target world object, mostly for testing
+        /// </summary>
+        /// <param name="spell"></param>
+        /// <param name="caster"></param>
+        /// <param name="target"></param>
+        /// <param name="projectileHit"></param>
+        public void CreateSpellEffects(Spell spell, WorldObject caster, WorldObject target, bool projectileHit = false)
+        {
+            DoSpellEffects(spell, caster, target, projectileHit);
+        }
+
         private void FinalizeLogout()
         {
             CurrentLandblock?.RemoveWorldObject(Guid, false);
