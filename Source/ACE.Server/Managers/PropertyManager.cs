@@ -12,6 +12,8 @@ using System.IO;
 using CsvHelper;
 using System.Globalization;
 using System.Reflection;
+using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace ACE.Server.Managers
 {
@@ -26,10 +28,7 @@ namespace ACE.Server.Managers
         private static readonly ConcurrentDictionary<string, ConfigurationEntry<string>> CachedStringSettings = new ConcurrentDictionary<string, ConfigurationEntry<string>>();
 
         private static readonly string currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        private static readonly string boolCsvPath = Path.Combine(currentDirectory, "Properties", "bool_properties.csv");
-        private static readonly string stringCsvPath = Path.Combine(currentDirectory, "Properties", "string_properties.csv");
-        private static readonly string longCsvPath = Path.Combine(currentDirectory, "Properties", "long_properties.csv");
-        private static readonly string doubleCsvPath = Path.Combine(currentDirectory, "Properties", "double_properties.csv");
+        private static readonly string jsonPath = Path.Combine(currentDirectory, "server_properties.json");
 
         private static Timer _workerThread;
 
@@ -40,22 +39,51 @@ namespace ACE.Server.Managers
         /// <param name="loadDefaultValues">Should we use the DefaultPropertyManager to load the default properties for keys?</param>
         public static void Initialize(bool loadDefaultValues = true)
         {
+            if (loadDefaultValues)
+                DefaultPropertyManager.LoadDefaultProperties();
+
+            LoadPropertiesFromJson();
+            //LoadPropertiesFromDB();
+
+            if (Program.IsRunningInContainer && !GetString("content_folder").Equals("/ace/Content"))
+                ModifyString("content_folder", "/ace/Content");
+
             _workerThread = new Timer(300000);
             _workerThread.Elapsed += DoWork;
             _workerThread.AutoReset = true;
             _workerThread.Start();
 
-            LoadCSVProperties();
-
-            if (Program.IsRunningInContainer && !GetString("content_folder").Equals("/ace/Content"))
-                ModifyString("content_folder", "/ace/Content");
-
-            //if (loadDefaultValues)
-                //DefaultPropertyManager.LoadDefaultProperties();
-
-            //LoadPropertiesFromDB();
         }
 
+        public static void LoadPropertiesFromJson()
+        {
+            PropertyCollection properties; ;
+            using (StreamReader r = new StreamReader(jsonPath))
+            {
+                string json = r.ReadToEnd();
+                properties = JsonConvert.DeserializeObject<PropertyCollection>(json);
+            }
+
+            foreach (var item in properties.BooleanSettings)
+            {
+                ModifyBool(item.Key, item.Value.Item);
+            }
+
+            foreach (var item in properties.DoubleSettings)
+            {
+                ModifyDouble(item.Key, item.Value.Item);
+            }
+
+            foreach (var item in properties.LongSettings)
+            {
+                ModifyLong(item.Key, item.Value.Item);
+            }
+
+            foreach (var item in properties.StringSettings)
+            {
+                ModifyString(item.Key, item.Value.Item);
+            }
+        }
 
         /// <summary>
         /// Loads the variables from the database directly into the cache.
@@ -74,55 +102,6 @@ namespace ACE.Server.Managers
             foreach (var i in DatabaseManager.ShardConfig.GetAllStrings())
                 CachedStringSettings[i.Key] = new ConfigurationEntry<string>(false, i.Value, i.Description);
         }
-
-        private static List<CSVProperty<T>> GetCSVProperties<T>(string path)
-        {
-            using (var reader = new StreamReader(path))
-            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
-            {
-                var records = csv.GetRecords<CSVProperty<T>>();
-                return records.ToList();
-
-            }
-        }
-
-        private static void WriteCSVProperties<T>(String path, Dictionary<string, Property<T>> properties)
-        {
-            using (var writer = new StreamWriter(path))
-            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
-            {
-                csv.WriteRecords(properties);
-            }
-        }
-
-        private static void LoadCSVProperties()
-        {
-            var boolProperties = GetCSVProperties<bool>(boolCsvPath);
-            var stringProperties = GetCSVProperties<string>(stringCsvPath);
-            var longProperties = GetCSVProperties<long>(longCsvPath);
-            var doubleProperties = GetCSVProperties<double>(doubleCsvPath);
-
-            foreach (var item in boolProperties)
-            {
-                PropertyManager.ModifyBool(item.Key, item.Item);
-            }
-
-            foreach (var item in longProperties)
-            {
-                PropertyManager.ModifyLong(item.Key, item.Item);
-            }
-
-            foreach (var item in stringProperties)
-            {
-                PropertyManager.ModifyString(item.Key, item.Item);
-            } 
-
-            foreach (var item in doubleProperties)
-            {
-                PropertyManager.ModifyDouble(item.Key, item.Item);
-            }
-        }
-
 
         /// <summary>
         /// Resyncs the variables with the database manually.
@@ -190,8 +169,6 @@ namespace ACE.Server.Managers
             else
                 CachedBooleanSettings[key] = new ConfigurationEntry<bool>(true, newVal, DefaultPropertyManager.DefaultBooleanProperties[key].Description);
 
-            ResyncVariables();
-
             return true;
         }
 
@@ -242,8 +219,6 @@ namespace ACE.Server.Managers
                 CachedLongSettings[key].Modify(newVal);
             else
                 CachedLongSettings[key] = new ConfigurationEntry<long>(true, newVal, DefaultPropertyManager.DefaultLongProperties[key].Description);
-
-            ResyncVariables();
 
             return true;
         }
@@ -310,8 +285,6 @@ namespace ACE.Server.Managers
                 }
             }
 
-            ResyncVariables();
-
             return true;
         }
 
@@ -363,8 +336,6 @@ namespace ACE.Server.Managers
             else
                 CachedStringSettings[key] = new ConfigurationEntry<string>(true, newVal, DefaultPropertyManager.DefaultStringProperties[key].Description);
 
-            ResyncVariables();
-
             return true;
         }
 
@@ -382,11 +353,8 @@ namespace ACE.Server.Managers
         /// </summary>
         private static void WriteBoolToDB()
         {
-            bool modified = false;
-
             foreach (var i in CachedBooleanSettings.Where(r => r.Value.Modified))
             {
-                modified = true;
                 // this probably should be upsert. This does 2 queries per modified datapoint.
                 // perhaps run a transaction to queue all the queries at once.
                 if (DatabaseManager.ShardConfig.BoolExists(i.Key))
@@ -395,11 +363,6 @@ namespace ACE.Server.Managers
                     DatabaseManager.ShardConfig.AddBool(i.Key, i.Value.Item, i.Value.Description);
             }
 
-            if (modified)
-            {
-                var mappedDictionary = CachedBooleanSettings.ToDictionary(r => r.Key, r => new Property<bool>(r.Value.Item, r.Value.Description));
-                WriteCSVProperties<bool>(boolCsvPath, mappedDictionary);
-            }
         }
 
         /// <summary>
@@ -407,22 +370,13 @@ namespace ACE.Server.Managers
         /// </summary>
         private static void WriteLongToDB()
         {
-            bool modified = false;
-
             foreach (var i in CachedLongSettings.Where(r => r.Value.Modified))
             {
-                modified = true;
                 // todo: see boolean section for caveat in this approach
                 if (DatabaseManager.ShardConfig.LongExists(i.Key))
                     DatabaseManager.ShardConfig.SaveLong(new Database.Models.Shard.ConfigPropertiesLong { Key = i.Key, Value = i.Value.Item, Description = i.Value.Description });
                 else
                     DatabaseManager.ShardConfig.AddLong(i.Key, i.Value.Item, i.Value.Description);
-            }
-
-            if (modified)
-            {
-                var mappedDictionary = CachedLongSettings.ToDictionary(r => r.Key, r => new Property<long>(r.Value.Item, r.Value.Description));
-                WriteCSVProperties<long>(longCsvPath, mappedDictionary);
             }
         }
 
@@ -431,27 +385,14 @@ namespace ACE.Server.Managers
         /// </summary>
         private static void WriteDoubleToDB()
         {
-            bool modified = false;
-
             foreach (var i in CachedDoubleSettings.Where(r => r.Value.Modified))
             {
-                modified = true;
                 // todo: see boolean section for caveat in this approach
                 if (DatabaseManager.ShardConfig.DoubleExists(i.Key))
                     DatabaseManager.ShardConfig.SaveDouble(new Database.Models.Shard.ConfigPropertiesDouble { Key = i.Key, Value = i.Value.Item, Description = i.Value.Description });
                 else
                     DatabaseManager.ShardConfig.AddDouble(i.Key, i.Value.Item, i.Value.Description);
             }
-
-            // Only write to csv file if a value has been modified.
-            if (modified)
-            {
-                var mappedDictionary = CachedDoubleSettings.ToDictionary(r => r.Key, r => new Property<double>(r.Value.Item, r.Value.Description));
-                WriteCSVProperties<double>(doubleCsvPath, mappedDictionary);
-            }
-
-
-
         }
 
         /// <summary>
@@ -459,25 +400,14 @@ namespace ACE.Server.Managers
         /// </summary>
         private static void WriteStringToDB()
         {
-            bool modified = false;
-
             foreach (var i in CachedStringSettings.Where(r => r.Value.Modified))
             {
-                modified = true;
                 // todo: see boolean section for caveat in this approach
                 if (DatabaseManager.ShardConfig.StringExists(i.Key))
                     DatabaseManager.ShardConfig.SaveString(new Database.Models.Shard.ConfigPropertiesString { Key = i.Key, Value = i.Value.Item, Description = i.Value.Description });
                 else
                     DatabaseManager.ShardConfig.AddString(i.Key, i.Value.Item, i.Value.Description);
             }
-
-            // Only write to csv file if a value has been modified.
-            if (modified)
-            {
-                var mappedDictionary = CachedStringSettings.ToDictionary(r => r.Key, r => new Property<string>(r.Value.Item, r.Value.Description));
-                WriteCSVProperties<string>(stringCsvPath, mappedDictionary);
-            }
-
         }
 
         private static void DoWork(Object source, ElapsedEventArgs e)
@@ -530,15 +460,6 @@ namespace ACE.Server.Managers
         public T Item { get; }
         public string Description { get; }
     }
-
-    public class CSVProperty<T>
-    {
-        public string Key { set; get; }
-        public T Item { set; get; }
-
-        public string Description { set; get; }
-    }
-
     class ConfigurationEntry<T>
     {
         public bool Modified;
@@ -593,51 +514,6 @@ namespace ACE.Server.Managers
             ));
         }
 
-        private static List<CSVProperty<T>> GetCSVProperties<T>(string path)
-        {
-            using (var reader = new StreamReader(path))
-            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
-            {
-                var records = csv.GetRecords<CSVProperty<T>>();
-                return records.ToList();
-
-            }
-        }
-
-        public static void LoadCSVProperties()
-        {
-            string currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string boolPath = Path.Combine("default_bool_properties.csv");
-            string stringPath = Path.Combine("default_string_properties.csv");
-            string longPath = Path.Combine("default_long_properties.csv");
-            string doublePath = Path.Combine("default_double_properties.csv");
-
-            var boolProperties = GetCSVProperties<bool>(boolPath);
-            var stringProperties = GetCSVProperties<string>(stringPath);
-            var longProperties = GetCSVProperties<long>(longPath);
-            var doubleProperties = GetCSVProperties<double>(doublePath);
-
-            foreach (var item in boolProperties)
-            {
-                PropertyManager.ModifyBool(item.Key, item.Item);
-            }
-
-            foreach (var item in longProperties)
-            {
-                PropertyManager.ModifyLong(item.Key, item.Item);
-            }
-
-            foreach (var item in stringProperties)
-            {
-                PropertyManager.ModifyString(item.Key, item.Item);
-            } 
-
-            foreach (var item in doubleProperties)
-            {
-                PropertyManager.ModifyDouble(item.Key, item.Item);
-            }
-        }
-
         public static void LoadDefaultProperties()
         {
             // Place any default properties to load in here
@@ -657,6 +533,7 @@ namespace ACE.Server.Managers
             //string
             foreach (var item in DefaultStringProperties)
                 PropertyManager.ModifyString(item.Key, item.Value.Item);
+
         }
 
         // ==================================================================================
@@ -793,7 +670,6 @@ namespace ACE.Server.Managers
                 ("rares_max_seconds_between", new Property<long>(5256000, "for rares_real_time: the maximum number of seconds a player can go before a second chance at a rare is allowed on rare eligible creature kills that did not generate a rare")),
                 ("summoning_killtask_multicredit_cap", new Property<long>(2, "if allow_summoning_killtask_multicredit is enabled, the maximum # of killtask credits a player can receive from 1 kill")),
                 ("teleport_visibility_fix", new Property<long>(0, "Fixes some possible issues with invisible players and mobs. 0 = default / disabled, 1 = players only, 2 = creatures, 3 = all world objects")),
-                ("windup_turn_retry_number", new Property<long>(0, "Fixes turning forever during windup. 0 = default / disabled, 1 = retry one time, 2 = retry two times, ...")),
                 ("max_armor_durability", new Property<long>(500, "the number of maximum durability points on loot generated armor")),
                 ("durability_damage", new Property<long>(1, "the amount of durability points reduced per damage taken")),
                 ("pvp_damage_cap", new Property<long>(450, "The cap for PvP damage per strike"))
@@ -846,7 +722,7 @@ namespace ACE.Server.Managers
                 ("pvp_melee_weapon_damage_modifier", new Property<double>(1.0, "Scales melee weapon damage for PvP")),
                 ("pvp_missile_weapon_damage_modifier", new Property<double>(1.0, "Scales missile weapon damage for PvP")),
                 ("consumable_speed_modifier", new Property<double>(1.0, "Scales consumable animation speed. Allows players to eat or drink at a faster rate if set to a higher number.")),
-                ("cloak_max_proc_rate", new Property<double>(25.0, "Cap cloak proc chance to this percentage (100.0 will effectively use the standard ACE proc rate).")),               
+                ("cloak_max_proc_rate", new Property<double>(25.0, "Cap cloak proc chance to this percentage (100.0 will effectively use the standard ACE proc rate).")),
                 ("xbow_cb_crit_rate", new Property<double>(0.05, "The amount that an xbow with Crippling Blow will land a critical strike. Default is 0.05(5%). A value of 1.00 would be 100% crit strike chance. be CAREFUL")),
                 ("bow_cb_crit_rate", new Property<double>(0.05, "The amount that a bow with Crippling Blow will land a critical strike. Default is 0.05(5%). A value of 1.00 would be 100% crit strike chance. be CAREFUL")),
                 ("thrown_cb_crit_rate", new Property<double>(0.05, "The amount that a thrown weapon with Crippling Blow will land a critical strike. Default is 0.05(5%). A value of 1.00 would be 100% crit strike chance. be CAREFUL")),
@@ -904,5 +780,13 @@ namespace ACE.Server.Managers
                 ("popup_motd", new Property<string>("", "Popup message of the day")),
                 ("server_motd", new Property<string>("", "Server message of the day"))
                 );
+    }
+
+    public class PropertyCollection
+    {
+        public Dictionary<string, Property<bool>> BooleanSettings;
+        public Dictionary<string, Property<string>> StringSettings;
+        public Dictionary<string, Property<long>> LongSettings;
+        public Dictionary<string, Property<double>> DoubleSettings;
     }
 }

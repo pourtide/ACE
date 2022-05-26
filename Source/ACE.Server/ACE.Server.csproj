@@ -251,16 +251,7 @@
       <None Update="Config.js">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="Properties\bool_properties.csv">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="Properties\double_properties.csv">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="Properties\long_properties.csv">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="Properties\string_properties.csv">
+      <None Update="server_properties.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     <None Update="Config.js.docker">

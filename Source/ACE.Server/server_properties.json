@@ -1,0 +1,842 @@
+{
+  "BooleanSettings": {
+    "account_login_boots_in_use": {
+      "Item": true,
+      "Description": "if FALSE, oldest connection to account is not booted when new connection occurs"
+    },
+    "advanced_combat_pets": {
+      "Item": false,
+      "Description": "(non-retail function) If enabled, Combat Pets can cast spells"
+    },
+    "advocate_fane_auto_bestow": {
+      "Item": false,
+      "Description": "If enabled, Advocate Fane will automatically bestow new advocates to advocate_fane_auto_bestow_level"
+    },
+    "aetheria_heal_color": {
+      "Item": false,
+      "Description": "If enabled, changes the aetheria healing over time messages from the default retail red color to green"
+    },
+    "allow_door_hold": {
+      "Item": true,
+      "Description": "enables retail behavior where standing on a door while it is closing keeps the door as ethereal until it is free from collisions, effectively holding the door open for other players"
+    },
+    "allow_fast_chug": {
+      "Item": true,
+      "Description": "enables retail behavior where a player can consume food and drink faster than normal by breaking animation"
+    },
+    "allow_jump_loot": {
+      "Item": true,
+      "Description": "enables retail behavior where a player can quickly loot items while jumping, bypassing the \u0027crouch down\u0027 animation"
+    },
+    "allow_negative_dispel_resist": {
+      "Item": true,
+      "Description": "enables retail behavior where #-# negative dispels can be resisted"
+    },
+    "allow_negative_rating_curve": {
+      "Item": true,
+      "Description": "enables retail behavior where negative DRR from void dots didn\u0027t switch to the reverse rating formula, resulting in a possibly unintended curve that quickly ramps up as -rating goes down, eventually approaching infinity / divide by 0 for -100 rating. less than -100 rating would produce negative numbers."
+    },
+    "allow_pkl_bump": {
+      "Item": true,
+      "Description": "enables retail behavior where /pkl checks for entry collisions, bumping the player position over if standing on another PKLite. This effectively enables /pkl door skipping from retail"
+    },
+    "allow_summoning_killtask_multicredit": {
+      "Item": true,
+      "Description": "enables retail behavior where a summoner can get multiple killtask credits from a monster"
+    },
+    "assess_creature_mod": {
+      "Item": false,
+      "Description": "(non-retail function) If enabled, re-enables former skill formula, when assess creature skill is not trained or spec\u0027ed"
+    },
+    "chat_disable_general": {
+      "Item": false,
+      "Description": "disable general global chat channel"
+    },
+    "chat_disable_lfg": {
+      "Item": false,
+      "Description": "disable lfg global chat channel"
+    },
+    "chat_disable_olthoi": {
+      "Item": false,
+      "Description": "disable olthoi global chat channel"
+    },
+    "chat_disable_roleplay": {
+      "Item": false,
+      "Description": "disable roleplay global chat channel"
+    },
+    "chat_disable_trade": {
+      "Item": false,
+      "Description": "disable trade global chat channel"
+    },
+    "chat_echo_only": {
+      "Item": false,
+      "Description": "global chat returns to sender only"
+    },
+    "chat_echo_reject": {
+      "Item": false,
+      "Description": "global chat returns to sender on reject"
+    },
+    "chat_inform_reject": {
+      "Item": true,
+      "Description": "global chat informs sender on reason for reject"
+    },
+    "chat_log_abuse": {
+      "Item": false,
+      "Description": "log abuse chat"
+    },
+    "chat_log_admin": {
+      "Item": false,
+      "Description": "log admin chat"
+    },
+    "chat_log_advocate": {
+      "Item": false,
+      "Description": "log advocate chat"
+    },
+    "chat_log_allegiance": {
+      "Item": false,
+      "Description": "log allegiance chat"
+    },
+    "chat_log_audit": {
+      "Item": true,
+      "Description": "log audit chat"
+    },
+    "chat_log_debug": {
+      "Item": false,
+      "Description": "log debug chat"
+    },
+    "chat_log_fellow": {
+      "Item": false,
+      "Description": "log fellow chat"
+    },
+    "chat_log_general": {
+      "Item": false,
+      "Description": "log general chat"
+    },
+    "chat_log_global": {
+      "Item": false,
+      "Description": "log global broadcasts"
+    },
+    "chat_log_help": {
+      "Item": false,
+      "Description": "log help chat"
+    },
+    "chat_log_lfg": {
+      "Item": false,
+      "Description": "log LFG chat"
+    },
+    "chat_log_olthoi": {
+      "Item": false,
+      "Description": "log olthoi chat"
+    },
+    "chat_log_qa": {
+      "Item": false,
+      "Description": "log QA chat"
+    },
+    "chat_log_roleplay": {
+      "Item": false,
+      "Description": "log roleplay chat"
+    },
+    "chat_log_sentinel": {
+      "Item": false,
+      "Description": "log sentinel chat"
+    },
+    "chat_log_society": {
+      "Item": false,
+      "Description": "log society chat"
+    },
+    "chat_log_trade": {
+      "Item": false,
+      "Description": "log trade chat"
+    },
+    "chat_log_townchans": {
+      "Item": false,
+      "Description": "log advocate town chat"
+    },
+    "chat_requires_account_15days": {
+      "Item": false,
+      "Description": "global chat privileges requires accounts to be 15 days or older"
+    },
+    "chess_enabled": {
+      "Item": true,
+      "Description": "if FALSE then chess will be disabled"
+    },
+    "client_movement_formula": {
+      "Item": false,
+      "Description": "If enabled, server uses DoMotion/StopMotion self-client movement methods instead of apply_raw_movement"
+    },
+    "container_opener_name": {
+      "Item": false,
+      "Description": "If enabled, when a player tries to open a container that is already in use by someone else, replaces \u0027someone else\u0027 in the message with the actual name of the player"
+    },
+    "corpse_decay_tick_logging": {
+      "Item": false,
+      "Description": "If ENABLED then player corpse ticks will be logged"
+    },
+    "corpse_destroy_pyreals": {
+      "Item": true,
+      "Description": "If FALSE then pyreals will not be completely destroyed on player death"
+    },
+    "craft_exact_msg": {
+      "Item": false,
+      "Description": "If TRUE, and player has crafting chance of success dialog enabled, shows them an additional message in their chat window with exact %"
+    },
+    "creature_name_check": {
+      "Item": true,
+      "Description": "if enabled, creature names in world database restricts player names during character creation"
+    },
+    "creatures_drop_createlist_wield": {
+      "Item": false,
+      "Description": "If FALSE then Wielded items in CreateList will not drop. Retail defaulted to TRUE but there are currently data errors"
+    },
+    "equipmentsetid_enabled": {
+      "Item": true,
+      "Description": "enable this to allow adding EquipmentSetIDs to loot armor"
+    },
+    "equipmentsetid_name_decoration": {
+      "Item": false,
+      "Description": "enable this to add the EquipmentSet name to loot armor name"
+    },
+    "fastbuff": {
+      "Item": true,
+      "Description": "If TRUE, enables the fast buffing trick from retail."
+    },
+    "fellow_busy_no_recruit": {
+      "Item": true,
+      "Description": "if FALSE, fellows can be recruited while they are busy, different from retail"
+    },
+    "fellow_kt_killer": {
+      "Item": true,
+      "Description": "if FALSE, fellowship kill tasks will share with the fellowship, even if the killer doesn\u0027t have the quest"
+    },
+    "fellow_kt_landblock": {
+      "Item": false,
+      "Description": "if TRUE, fellowship kill tasks will share with landblock range (192 distance radius, or entire dungeon)"
+    },
+    "fellow_quest_bonus": {
+      "Item": false,
+      "Description": "if TRUE, applies EvenShare formula to fellowship quest reward XP (300% max bonus, defaults to false in retail)"
+    },
+    "gateway_ties_summonable": {
+      "Item": true,
+      "Description": "if disabled, players cannot summon ties from gateways. defaults to enabled, as in retail"
+    },
+    "house_15day_account": {
+      "Item": true,
+      "Description": "if disabled, houses can be purchased with accounts created less than 15 days old"
+    },
+    "house_30day_cooldown": {
+      "Item": true,
+      "Description": "if disabled, houses can be purchased without waiting 30 days between each purchase"
+    },
+    "house_hook_limit": {
+      "Item": true,
+      "Description": "if disabled, house hook limits are ignored"
+    },
+    "house_hookgroup_limit": {
+      "Item": true,
+      "Description": "if disabled, house hook group limits are ignored"
+    },
+    "house_per_char": {
+      "Item": false,
+      "Description": "if TRUE, allows 1 house per char instead of 1 house per account"
+    },
+    "house_purchase_requirements": {
+      "Item": true,
+      "Description": "if disabled, requirements to purchase/rent house are not checked"
+    },
+    "house_rent_enabled": {
+      "Item": true,
+      "Description": "If FALSE then rent is not required"
+    },
+    "iou_trades": {
+      "Item": false,
+      "Description": "(non-retail function) If enabled, IOUs can be traded for objects that are missing in DB but added/restored later on"
+    },
+    "item_dispel": {
+      "Item": false,
+      "Description": "if enabled, allows players to dispel items. defaults to end of retail, where item dispels could only target creatures"
+    },
+    "legacy_loot_system": {
+      "Item": false,
+      "Description": "use the previous iteration of the ace lootgen system"
+    },
+    "lifestone_broadcast_death": {
+      "Item": true,
+      "Description": "if true, player deaths are additionally broadcast to other players standing near the destination lifestone"
+    },
+    "loot_quality_mod": {
+      "Item": true,
+      "Description": "if FALSE then the loot quality modifier of a Death Treasure profile does not affect loot generation"
+    },
+    "npc_hairstyle_fullrange": {
+      "Item": false,
+      "Description": "if TRUE, allows generated creatures to use full range of hairstyles. Retail only allowed first nine (0-8) out of 51"
+    },
+    "offline_xp_passup_limit": {
+      "Item": true,
+      "Description": "if FALSE, allows unlimited xp to passup to offline characters in allegiances"
+    },
+    "olthoi_play_enabled": {
+      "Item": false,
+      "Description": "allows players to create and play as olthoi characters"
+    },
+    "override_encounter_spawn_rates": {
+      "Item": false,
+      "Description": "if enabled, landblock encounter spawns are overidden by double properties below."
+    },
+    "permit_corpse_all": {
+      "Item": false,
+      "Description": "If TRUE, /permit grants permittees access to all corpses of the permitter. Defaults to FALSE as per retail, where /permit only grants access to 1 locked corpse"
+    },
+    "persist_movement": {
+      "Item": false,
+      "Description": "If TRUE, persists autonomous movements such as turns and sidesteps through non-autonomous server actions. Retail didn\u0027t appear to do this, but some players may prefer this."
+    },
+    "pet_stow_replace": {
+      "Item": false,
+      "Description": "pet stowing for different pet devices becomes a stow and replace. defaults to retail value of false"
+    },
+    "player_config_command": {
+      "Item": false,
+      "Description": "If enabled, players can use /config to change their settings via text commands"
+    },
+    "player_receive_immediate_save": {
+      "Item": false,
+      "Description": "if enabled, when the player receives items from an NPC, they will be saved immediately"
+    },
+    "pk_server": {
+      "Item": false,
+      "Description": "set this to TRUE for darktide servers"
+    },
+    "pk_server_safe_training_academy": {
+      "Item": false,
+      "Description": "set this to TRUE to disable pk fighting in training academy and time to exit starter town safely"
+    },
+    "pkl_server": {
+      "Item": false,
+      "Description": "set this to TRUE for pink servers"
+    },
+    "quest_info_enabled": {
+      "Item": false,
+      "Description": "toggles the /myquests player command"
+    },
+    "rares_real_time": {
+      "Item": true,
+      "Description": "allow for second chance roll based on an rng seeded timestamp for a rare on rare eligible kills that do not generate a rare, rares_max_seconds_between defines maximum seconds before second chance kicks in"
+    },
+    "rares_real_time_v2": {
+      "Item": false,
+      "Description": "chances for a rare to be generated on rare eligible kills are modified by the last time one was found per each player, rares_max_days_between defines maximum days before guaranteed rare generation"
+    },
+    "runrate_add_hooks": {
+      "Item": false,
+      "Description": "if TRUE, adds some runrate hooks that were missing from retail (exhaustion done, raise skill/attribute"
+    },
+    "reportbug_enabled": {
+      "Item": false,
+      "Description": "toggles the /reportbug player command"
+    },
+    "require_spell_comps": {
+      "Item": true,
+      "Description": "if FALSE, spell components are no longer required to be in inventory to cast spells. defaults to enabled, as in retail"
+    },
+    "safe_spell_comps": {
+      "Item": false,
+      "Description": "if TRUE, disables spell component burning for everyone"
+    },
+    "salvage_handle_overages": {
+      "Item": false,
+      "Description": "in retail, if 2 salvage bags were combined beyond 100 structure, the overages would be lost"
+    },
+    "show_ammo_buff": {
+      "Item": false,
+      "Description": "shows active enchantments such as blood drinker on equipped missile ammo during appraisal"
+    },
+    "show_aura_buff": {
+      "Item": false,
+      "Description": "shows active aura enchantments on wielded items during appraisal"
+    },
+    "show_dat_warning": {
+      "Item": false,
+      "Description": "if TRUE, will alert player (dat_warning_msg) when client attempts to download from server and boot them from game, disabled by default"
+    },
+    "show_dot_messages": {
+      "Item": false,
+      "Description": "enabled, shows combat messages for DoT damage ticks. defaults to disabled, as in retail"
+    },
+    "show_first_login_gift": {
+      "Item": false,
+      "Description": "if TRUE, will show on first login that the player earned bonus item (Blackmoor\u0027s Favor and/or Asheron\u0027s Benediction), disabled by default because msg is kind of odd on an emulator"
+    },
+    "show_mana_conv_bonus_0": {
+      "Item": true,
+      "Description": "if disabled, only shows mana conversion bonus if not zero, during appraisal of casting items"
+    },
+    "smite_uses_takedamage": {
+      "Item": false,
+      "Description": "if enabled, smite applies damage via TakeDamage"
+    },
+    "spellcast_recoil_queue": {
+      "Item": false,
+      "Description": "if true, players can queue the next spell to cast during recoil animation"
+    },
+    "spell_projectile_ethereal": {
+      "Item": false,
+      "Description": "broadcasts all spell projectiles as ethereal to clients only, and manually send stop velocity on collision. can fix various issues with client missing target id."
+    },
+    "suicide_instant_death": {
+      "Item": false,
+      "Description": "if enabled, @die command kills player instantly. defaults to disabled, as in retail"
+    },
+    "taboo_table": {
+      "Item": true,
+      "Description": "if enabled, taboo table restricts player names during character creation"
+    },
+    "tailoring_intermediate_uieffects": {
+      "Item": false,
+      "Description": "If true, tailoring intermediate icons retain the magical/elemental highlight of the original item"
+    },
+    "trajectory_alt_solver": {
+      "Item": false,
+      "Description": "use the alternate trajectory solver for missiles and spell projectiles"
+    },
+    "universal_masteries": {
+      "Item": true,
+      "Description": "if TRUE, matches end of retail masteries - players wielding almost any weapon get \u002B5 DR, except if the weapon \u0022seems tough to master\u0022. if FALSE, players start with mastery of 1 melee and 1 ranged weapon type based on heritage, and can later re-select these 2 masteries"
+    },
+    "use_generator_rotation_offset": {
+      "Item": true,
+      "Description": "enables or disables using the generator\u0027s current rotation when offseting relative positions"
+    },
+    "use_turbine_chat": {
+      "Item": true,
+      "Description": "enables or disables global chat channels (General, LFG, Roleplay, Trade, Olthoi, Society, Allegience)"
+    },
+    "use_wield_requirements": {
+      "Item": true,
+      "Description": "disable this to bypass wield requirements. mostly for dev debugging"
+    },
+    "version_info_enabled": {
+      "Item": false,
+      "Description": "toggles the /aceversion player command"
+    },
+    "vendor_shop_uses_generator": {
+      "Item": false,
+      "Description": "enables or disables vendors using generator system in addition to createlist to create artificial scarcity"
+    },
+    "world_closed": {
+      "Item": false,
+      "Description": "enable this to startup world as a closed to players world"
+    }
+  },
+  "LongSettings": {
+    "char_delete_time": {
+      "Item": 3600,
+      "Description": "the amount of time in seconds a deleted character can be restored"
+    },
+    "chat_requires_account_time_seconds": {
+      "Item": 0,
+      "Description": "the amount of time in seconds an account is required to have existed for for global chat privileges"
+    },
+    "chat_requires_player_age": {
+      "Item": 0,
+      "Description": "the amount of time in seconds a player is required to have played for global chat privileges"
+    },
+    "chat_requires_player_level": {
+      "Item": 0,
+      "Description": "the level a player is required to have for global chat privileges"
+    },
+    "corpse_spam_limit": {
+      "Item": 15,
+      "Description": "the number of corpses a player is allowed to leave on a landblock at one time"
+    },
+    "default_subscription_level": {
+      "Item": 1,
+      "Description": "retail defaults to 1, 1 = standard subscription (same as 2 and 3), 4 grants ToD pre-order bonus item Asheron\u0027s Benediction"
+    },
+    "fellowship_even_share_level": {
+      "Item": 50,
+      "Description": "level when fellowship XP sharing is no longer restricted"
+    },
+    "mansion_min_rank": {
+      "Item": 6,
+      "Description": "overrides the default allegiance rank required to own a mansion"
+    },
+    "max_chars_per_account": {
+      "Item": 11,
+      "Description": "retail defaults to 11, client supports up to 20"
+    },
+    "pk_timer": {
+      "Item": 20,
+      "Description": "the number of seconds where a player cannot perform certain actions (ie. teleporting) after becoming involved in a PK battle"
+    },
+    "player_save_interval": {
+      "Item": 300,
+      "Description": "the number of seconds between automatic player saves"
+    },
+    "rares_max_days_between": {
+      "Item": 45,
+      "Description": "for rares_real_time_v2: the maximum number of days a player can go before a rare is generated on rare eligible creature kills"
+    },
+    "rares_max_seconds_between": {
+      "Item": 5256000,
+      "Description": "for rares_real_time: the maximum number of seconds a player can go before a second chance at a rare is allowed on rare eligible creature kills that did not generate a rare"
+    },
+    "summoning_killtask_multicredit_cap": {
+      "Item": 2,
+      "Description": "if allow_summoning_killtask_multicredit is enabled, the maximum # of killtask credits a player can receive from 1 kill"
+    },
+    "teleport_visibility_fix": {
+      "Item": 0,
+      "Description": "Fixes some possible issues with invisible players and mobs. 0 = default / disabled, 1 = players only, 2 = creatures, 3 = all world objects"
+    },
+    "windup_turn_retry_number": {
+      "Item": 0,
+      "Description": "Fixes turning forever during windup. 0 = default / disabled, 1 = retry one time, 2 = retry two times, ..."
+    },
+    "max_armor_durability": {
+      "Item": 500,
+      "Description": "the number of maximum durability points on loot generated armor"
+    },
+    "durability_damage": {
+      "Item": 1,
+      "Description": "the amount of durability points reduced per damage taken"
+    },
+    "pvp_damage_cap": {
+      "Item": 450,
+      "Description": "The cap for PvP damage per strike"
+    }
+  },
+  "DoubleSettings": {
+    "cantrip_drop_rate": {
+      "Item": 1,
+      "Description": "Scales the chance for cantrips to drop in each tier. Defaults to 1.0, as per end of retail"
+    },
+    "minor_cantrip_drop_rate": {
+      "Item": 1,
+      "Description": "Scales the chance for minor cantrips to drop, relative to other cantrip levels in the tier. Defaults to 1.0, as per end of retail"
+    },
+    "major_cantrip_drop_rate": {
+      "Item": 1,
+      "Description": "Scales the chance for major cantrips to drop, relative to other cantrip levels in the tier. Defaults to 1.0, as per end of retail"
+    },
+    "epic_cantrip_drop_rate": {
+      "Item": 1,
+      "Description": "Scales the chance for epic cantrips to drop, relative to other cantrip levels in the tier. Defaults to 1.0, as per end of retail"
+    },
+    "legendary_cantrip_drop_rate": {
+      "Item": 1,
+      "Description": "Scales the chance for legendary cantrips to drop, relative to other cantrip levels in the tier. Defaults to 1.0, as per end of retail"
+    },
+    "advocate_fane_auto_bestow_level": {
+      "Item": 1,
+      "Description": "the level that advocates are automatically bestowed by Advocate Fane if advocate_fane_auto_bestow is true"
+    },
+    "aetheria_drop_rate": {
+      "Item": 1,
+      "Description": "Modifier for Aetheria drop rate, 1 being normal"
+    },
+    "chess_ai_start_time": {
+      "Item": -1,
+      "Description": "the number of seconds for the chess ai to start. defaults to -1 (disabled)"
+    },
+    "encounter_delay": {
+      "Item": 1800,
+      "Description": "the number of seconds a generator profile for regions is delayed from returning to free slots"
+    },
+    "encounter_regen_interval": {
+      "Item": 600,
+      "Description": "the number of seconds a generator for regions at which spawns its next set of objects"
+    },
+    "equipmentsetid_drop_rate": {
+      "Item": 1,
+      "Description": "Modifier for EquipmentSetID drop rate, 1 being normal"
+    },
+    "fast_missile_modifier": {
+      "Item": 1.2,
+      "Description": "The speed multiplier applied to fast missiles. Defaults to retail value of 1.2"
+    },
+    "ignore_magic_armor_pvp_scalar": {
+      "Item": 1,
+      "Description": "Scales the effectiveness of IgnoreMagicArmor (ie. hollow weapons) in pvp battles. 1.0 = full effectiveness / ignore all enchantments on armor (default), 0.5 = half effectiveness / use half enchantments from armor, 0.0 = no effectiveness / use full enchantments from armor"
+    },
+    "ignore_magic_resist_pvp_scalar": {
+      "Item": 1,
+      "Description": "Scales the effectiveness of IgnoreMagicResist (ie. hollow weapons) in pvp battles. 1.0 = full effectiveness / ignore all resistances from life enchantments (default), 0.5 = half effectiveness / use half resistances from life enchantments, 0.0 = no effectiveness / use full resistances from life enchantments"
+    },
+    "luminance_modifier": {
+      "Item": 1,
+      "Description": "Scales the amount of luminance received by players"
+    },
+    "melee_max_angle": {
+      "Item": 0,
+      "Description": "for melee players, the maximum angle before a TurnTo is required. retail appeared to have required a TurnTo even for the smallest of angle offsets."
+    },
+    "mob_awareness_range": {
+      "Item": 1,
+      "Description": "Scales the distance the monsters become alerted and aggro the players"
+    },
+    "pk_new_character_grace_period": {
+      "Item": 300,
+      "Description": "the number of seconds, in addition to pk_respite_timer, that a player killer is set to non-player killer status after first exiting training academy"
+    },
+    "pk_respite_timer": {
+      "Item": 300,
+      "Description": "the number of seconds that a player killer is set to non-player killer status after dying to another player killer"
+    },
+    "quest_mindelta_rate": {
+      "Item": 1,
+      "Description": "scales all quest min delta time between solves, 1 being normal"
+    },
+    "rare_drop_rate_percent": {
+      "Item": 0.04,
+      "Description": "Adjust the chance of a rare to spawn as a percentage. Default is 0.04, or 1 in 2,500. Max is 100, or every eligible drop."
+    },
+    "spellcast_max_angle": {
+      "Item": 20,
+      "Description": "for advanced player spell casting, the maximum angle to target release a spell projectile. retail seemed to default to value of around 20, although some players seem to prefer a higher 45 degree angle"
+    },
+    "trophy_drop_rate": {
+      "Item": 1,
+      "Description": "Modifier for trophies dropped on creature death"
+    },
+    "unlocker_window": {
+      "Item": 10,
+      "Description": "The number of seconds a player unlocking a chest has exclusive access to first opening the chest."
+    },
+    "vendor_unique_rot_time": {
+      "Item": 300,
+      "Description": "the number of seconds before unique items sold to vendors disappear"
+    },
+    "vitae_penalty": {
+      "Item": 0.05,
+      "Description": "the amount of vitae penalty a player gets per death"
+    },
+    "vitae_penalty_max": {
+      "Item": 0.4,
+      "Description": "the maximum vitae penalty a player can have"
+    },
+    "void_pvp_modifier": {
+      "Item": 0.5,
+      "Description": "Scales the amount of damage players take from Void Magic. Defaults to 0.5, as per retail. For earlier content where DRR isn\u0027t as readily available, this can be adjusted for balance."
+    },
+    "xp_modifier": {
+      "Item": 1,
+      "Description": "scales the amount of xp received by players"
+    },
+    "spell_damage_modifier": {
+      "Item": 1,
+      "Description": ""
+    },
+    "war_streak_spell_damage_modifier": {
+      "Item": 1,
+      "Description": ""
+    },
+    "void_streak_spell_damage_modifier": {
+      "Item": 1,
+      "Description": ""
+    },
+    "void_projectile_modifier": {
+      "Item": 1,
+      "Description": "scales void projectile dmg"
+    },
+    "imbue_crippling_blow_melee_scalar": {
+      "Item": 6,
+      "Description": "Scales the effectiveness of Crippling Blow for melee attacks at roughly max base skill. 1.0 = no effect. 2.0 = double damage on crit at max base skill. 4.0 = 4x damage etc. ACE DEFAULT IS 6.0"
+    },
+    "imbue_crippling_blow_magic_scalar": {
+      "Item": 6,
+      "Description": "Scales the effectiveness of Crippling Blow for magic attacks at roughly max base skill. 1.0 = no effect. 2.0 = double damage on crit at max base skill. 4.0 = 4x damage etc.  ACE DEFAULT IS 6.0"
+    },
+    "imbue_crippling_blow_missile_scalar": {
+      "Item": 6,
+      "Description": "Scales the effectiveness of Crippling Blow for missile attacks at roughly max base skill. 1.0 = no effect. 2.0 = double damage on crit at max base skill. 4.0 = 4x damage etc.  ACE DEFAULT IS 6.0"
+    },
+    "imbue_critical_strike_magic_scalar": {
+      "Item": 1,
+      "Description": "Scales the effectiveness of Critical Strike Imbue for magic attacks at roughly max base skill. 1.0 = default effect. 2.0 = Crit chance double of what the player normally would have with a CS weapon"
+    },
+    "imbue_critical_strike_melee_scalar": {
+      "Item": 1,
+      "Description": "Scales the effectiveness of Critical Strike Imbue for melee attacks at roughly max base skill. 1.0 = default effect. 2.0 = Crit chance double of what the player normally would have with a CS weapon"
+    },
+    "imbue_critical_strike_missile_scalar": {
+      "Item": 1,
+      "Description": "Scales the effectiveness of Critical Strike Imbue for missile attacks at roughly max base skill. 1.0 = default effect. 2.0 = Crit chance double of what the player normally would have with a CS weapon"
+    },
+    "pvp_melee_weapon_damage_modifier": {
+      "Item": 1,
+      "Description": "Scales melee weapon damage for PvP"
+    },
+    "pvp_missile_weapon_damage_modifier": {
+      "Item": 1,
+      "Description": "Scales missile weapon damage for PvP"
+    },
+    "consumable_speed_modifier": {
+      "Item": 1,
+      "Description": "Scales consumable animation speed. Allows players to eat or drink at a faster rate if set to a higher number."
+    },
+    "cloak_max_proc_rate": {
+      "Item": 25,
+      "Description": "Cap cloak proc chance to this percentage (100.0 will effectively use the standard ACE proc rate)."
+    },
+    "xbow_cb_crit_rate": {
+      "Item": 0.05,
+      "Description": "The amount that an xbow with Crippling Blow will land a critical strike. Default is 0.05(5%). A value of 1.00 would be 100% crit strike chance. be CAREFUL"
+    },
+    "bow_cb_crit_rate": {
+      "Item": 0.05,
+      "Description": "The amount that a bow with Crippling Blow will land a critical strike. Default is 0.05(5%). A value of 1.00 would be 100% crit strike chance. be CAREFUL"
+    },
+    "thrown_cb_crit_rate": {
+      "Item": 0.05,
+      "Description": "The amount that a thrown weapon with Crippling Blow will land a critical strike. Default is 0.05(5%). A value of 1.00 would be 100% crit strike chance. be CAREFUL"
+    },
+    "heavy_cb_damage": {
+      "Item": 0,
+      "Description": "The extra crit rating Heavy Weapons will get when imbued with CB. For every 1.0 added to this number, this equals 100 crit rating."
+    },
+    "light_cb_damage": {
+      "Item": 0,
+      "Description": "The extra crit rating Light Weapons will get when imbued with CB. For every 1.0 added to this number, this equals 100 crit rating."
+    },
+    "finesse_cb_damage": {
+      "Item": 0,
+      "Description": "The extra crit rating Finesse Weapons will get when imbued with CB. For every 1.0 added to this number, this equals 100 crit rating."
+    },
+    "twohanded_cb_damage": {
+      "Item": 0,
+      "Description": "The extra crit rating Two-Handed Weapons will get when imbued with CB. For every 1.0 added to this number, this equals 100 crit rating."
+    },
+    "xbow_cb_damage": {
+      "Item": 0,
+      "Description": "The extra crit rating Crossbow will get when imbued with CB. For every 1.0 added to this number, this equals 100 crit rating."
+    },
+    "bow_cb_damage": {
+      "Item": 0,
+      "Description": "The extra crit rating Bow will get when imbued with CB. For every 1.0 added to this number, this equals 100 crit rating."
+    },
+    "thrown_cb_damage": {
+      "Item": 0,
+      "Description": "The extra crit rating Thrown Weapons will get when imbued with CB. For every 1.0 added to this number, this equals 100 crit rating."
+    },
+    "heavy_cb_crit_rate": {
+      "Item": 0.05,
+      "Description": "The amount that a heavy weapon with Crippling Blow will land a critical strike. Default is 0.05(5%). A value of 1.00 would be 100% crit strike chance. be CAREFUL"
+    },
+    "light_cb_crit_rate": {
+      "Item": 0.05,
+      "Description": "The amount that a light weapon with Crippling Blow will land a critical strike. Default is 0.05(5%). A value of 1.00 would be 100% crit strike chance. be CAREFUL"
+    },
+    "finesse_cb_crit_rate": {
+      "Item": 0.05,
+      "Description": "The amount that a finesse weapon with Crippling Blow will land a critical strike. Default is 0.05(5%). A value of 1.00 would be 100% crit strike chance. be CAREFUL"
+    },
+    "twohanded_cb_crit_rate": {
+      "Item": 0.05,
+      "Description": "The amount that a twohanded weapon with Crippling Blow will land a critical strike. Default is 0.05(5%). A value of 1.00 would be 100% crit strike chance. be CAREFUL"
+    },
+    "heavy_cs_damage": {
+      "Item": 0,
+      "Description": "The extra crit rating Heavy Weapons will get when imbued with CS. For every 1.0 added to this number, this equals 100 crit rating."
+    },
+    "light_cs_damage": {
+      "Item": 0,
+      "Description": "The extra crit rating Light Weapons will get when imbued with CS. For every 1.0 added to this number, this equals 100 crit rating."
+    },
+    "finesse_cs_damage": {
+      "Item": 0,
+      "Description": "The extra crit rating Finesse Weapons will get when imbued with CS. For every 1.0 added to this number, this equals 100 crit rating."
+    },
+    "twohanded_cs_damage": {
+      "Item": 0,
+      "Description": "The extra crit rating Two-Handed Weapons will get when imbued with CS. For every 1.0 added to this number, this equals 100 crit rating."
+    },
+    "xbow_cs_damage": {
+      "Item": 0,
+      "Description": "The extra crit rating Crossbow will get when imbued with CS. For every 1.0 added to this number, this equals 100 crit rating."
+    },
+    "bow_cs_damage": {
+      "Item": 0,
+      "Description": "The extra crit rating Bow will get when imbued with CS. For every 1.0 added to this number, this equals 100 crit rating."
+    },
+    "thrown_cs_damage": {
+      "Item": 0,
+      "Description": "The extra crit rating Thrown Weapons will get when imbued with CS. For every 1.0 added to this number, this equals 100 crit rating."
+    },
+    "heavy_weapons_damage": {
+      "Item": 14,
+      "Description": "The amount of flat damage added to heavy weapons per tink. Note for each damage event the added damage will be randomized between 1 and this value. Default is 0."
+    },
+    "light_weapons_damage": {
+      "Item": 0,
+      "Description": "The amount of flat damage added to light weapons per tink. Note for each damage event the added damage will be randomized between 1 and this value. Default is 0."
+    },
+    "finesse_weapons_damage": {
+      "Item": 0,
+      "Description": "The amount of flat damage added to finesse weapons per tink. Note for each damage event the added damage will be randomized between 1 and this value. Default is 0."
+    },
+    "twohanded_damage": {
+      "Item": 0,
+      "Description": "The amount of flat damage added to twohanded weapons per tink. Note for each damage event the added damage will be randomized between 1 and this value. Default is 0."
+    },
+    "xbow_damage": {
+      "Item": 0,
+      "Description": "The amount of flat damage added to xbow weapons per tink. Note for each damage event the added damage will be randomized between 1 and this value. Default is 0."
+    },
+    "bow_damage": {
+      "Item": 0,
+      "Description": "The amount of flat damage added to bow weapons per tink. Note for each damage event the added damage will be randomized between 1 and this value. Default is 0."
+    },
+    "thrown_damage": {
+      "Item": 0,
+      "Description": "The amount of flat damage added to thrown weapons per tink. Note for each damage event the added damage will be randomized between 1 and this value. Default is 0."
+    },
+    "pvp_ar_melee_cap": {
+      "Item": 0.6,
+      "Description": "The cap on what proportion of armor can be reduced on melee AR. Should be between 0 and 1. Default is 0.6 for a 60% reduction in armor."
+    },
+    "pvp_ar_missile_cap": {
+      "Item": 0.6,
+      "Description": "The cap on what proportion of armor can be reduced on missile AR. Should be between 0 and 1. Default is 0.6 for a 60% reduction in armor."
+    },
+    "phantom_shield_damage_multi": {
+      "Item": 1,
+      "Description": "The damage multiplier done by phantom weapons vs shields. Default is 1.0x"
+    },
+    "phantom_damage_multi": {
+      "Item": 1,
+      "Description": "The damage multiplier done by phantom weapons vs armor. Default is 1.0x"
+    }
+  },
+  "StringSettings": {
+    "content_folder": {
+      "Item": "Content",
+      "Description": "for content creators to live edit weenies. defaults to Content folder found in same directory as ACE.Server.dll"
+    },
+    "dat_warning_msg": {
+      "Item": "Your DAT files are incomplete.\nACEmulator does not support dynamic DAT updating at this time.\nPlease visit https://emulator.ac/how-to-play to download the complete DAT files.",
+      "Description": "Warning message displayed (if show_dat_warning is true) to player if client attempts DAT download from server"
+    },
+    "popup_header": {
+      "Item": "Welcome to Asheron\u0027s Call!",
+      "Description": "Welcome message displayed when you log in"
+    },
+    "popup_welcome": {
+      "Item": "To begin your training, speak to the Society Greeter. Walk up to the Society Greeter using the \u0027W\u0027 key, then double-click on her to initiate a conversation.",
+      "Description": "Welcome message popup in training halls"
+    },
+    "popup_welcome_olthoi": {
+      "Item": "Welcome to the Olthoi hive! Be sure to talk to the Olthoi Queen to receive the Olthoi protections granted by the energies of the hive.",
+      "Description": "Welcome message displayed on the first login for an Olthoi Player"
+    },
+    "popup_motd": {
+      "Item": "",
+      "Description": "Popup message of the day"
+    },
+    "server_motd": {
+      "Item": "",
+      "Description": "Server message of the day"
+    }
+  }
+}
