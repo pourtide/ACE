@@ -53,15 +53,15 @@
       "Description": "disable general global chat channel"
     },
     "chat_disable_lfg": {
-      "Item": false,
+      "Item": true,
       "Description": "disable lfg global chat channel"
     },
     "chat_disable_olthoi": {
-      "Item": false,
+      "Item": true,
       "Description": "disable olthoi global chat channel"
     },
     "chat_disable_roleplay": {
-      "Item": false,
+      "Item": true,
       "Description": "disable roleplay global chat channel"
     },
     "chat_disable_trade": {
@@ -219,6 +219,10 @@
     "gateway_ties_summonable": {
       "Item": true,
       "Description": "if disabled, players cannot summon ties from gateways. defaults to enabled, as in retail"
+    },
+    "housing_enabled": {
+        "Item": false,
+        "Description":  "if FALSE, housing will be disabled"
     },
     "house_15day_account": {
       "Item": true,

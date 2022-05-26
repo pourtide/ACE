@@ -32,6 +32,13 @@ namespace ACE.Server.WorldObjects
             //Console.WriteLine($"\n{Name}.HandleActionBuyHouse()");
             log.Info($"[HOUSE] {Name}.HandleActionBuyHouse()");
 
+            if (!PropertyManager.GetBool("housing_enabled").Item)
+            {
+                Session.Network.EnqueueSend(new GameMessageSystemChat("Housing is disabled on this server!", ChatMessageType.Broadcast));
+                log.Info($"[HOUSE] {Name}.HandleActionBuyHouse(): Failed pre-purchase requirement - Housing is disbled on this server");
+                return;
+            }
+
             // verify player doesn't already own a house
             var houseInstance = GetHouseInstance();
 
