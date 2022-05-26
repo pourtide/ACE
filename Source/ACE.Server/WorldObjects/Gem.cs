@@ -124,6 +124,12 @@ namespace ACE.Server.WorldObjects
             {
                 var spell = new Spell(SpellDID.Value);
 
+                if (spell.MetaSpellType == SpellType.Dispel && !PropertyManager.GetBool("dispel_gems_enabled").Item)
+                {
+                    player.Session.Network.EnqueueSend(new GameEventCommunicationTransientString(player.Session, "Dispel Gems are disabled on this server!"));
+                    return;
+                }
+
                 if (spell.MetaSpellType == SpellType.Dispel && !VerifyDispelPKStatus(this, player))
                     return;
             }

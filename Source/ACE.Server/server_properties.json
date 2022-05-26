@@ -188,6 +188,10 @@
       "Item": false,
       "Description": "If FALSE then Wielded items in CreateList will not drop. Retail defaulted to TRUE but there are currently data errors"
     },
+    "dispel_gems_enabled": {
+        "Item": false,
+        "Description":  "If False, then dispel gems will not work"
+    },
     "equipmentsetid_enabled": {
       "Item": true,
       "Description": "enable this to allow adding EquipmentSetIDs to loot armor"
