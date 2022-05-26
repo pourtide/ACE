@@ -59,7 +59,7 @@ namespace ACE.Server.Factories
             if (ThreadSafeRandom.Next(1, t1_chance) == 1)   // 1 in 2,500 chance
             {
                 tier = 1;
-                if (ThreadSafeRandom.Next(1, 10) == 1)      // 1 in 25,000 chance
+                /*if (ThreadSafeRandom.Next(1, 10) == 1)      // 1 in 25,000 chance
                 {
                     tier = 2;
                 }
@@ -79,6 +79,7 @@ namespace ACE.Server.Factories
                 {
                     tier = 6;
                 }
+                */
             }
 
             if (tier == 0) return null;

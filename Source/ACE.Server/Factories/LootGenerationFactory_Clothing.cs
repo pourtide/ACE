@@ -157,9 +157,18 @@ namespace ACE.Server.Factories
 
             // item value
             //if (wo.HasMutateFilter(MutateFilter.Value))   // fixme: data
-                MutateValue(wo, profile.Tier, roll);
+            MutateValue(wo, profile.Tier, roll);
 
-            wo.LongDesc = GetLongDesc(wo);
+            //wo.LongDesc = GetLongDesc(wo);
+
+            // underclothes should not have durability
+            if (((wo.ClothingPriority & (CoverageMask)CoverageMaskHelper.Underwear) == 0))
+            {
+                wo.SetProperty(PropertyInt.Durability, 500);
+
+                wo.LongDesc = $"Durability: {wo.Durability} / 500";
+            }
+
         }
 
         private static bool AssignArmorLevel_New(WorldObject wo, TreasureDeath profile, TreasureRoll roll, LootTables.ArmorType armorType)
@@ -847,7 +856,7 @@ namespace ACE.Server.Factories
 
             // item value
             //if (wo.HasMutateFilter(MutateFilter.Value))
-                MutateValue(wo, profile.Tier, roll);
+            MutateValue(wo, profile.Tier, roll);
         }
 
         private static int RollCloak_ItemMaxLevel(TreasureDeath profile)
@@ -860,7 +869,7 @@ namespace ACE.Server.Factories
             {
                 case 1:
                 case 2:
-                default:                
+                default:
                     cloakLevel = 1;
                     break;
                 case 3:

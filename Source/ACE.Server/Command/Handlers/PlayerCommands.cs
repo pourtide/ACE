@@ -381,6 +381,14 @@ namespace ACE.Server.Command.Handlers
             session.Network.EnqueueSend(new GameMessageSystemChat(msg, ChatMessageType.WorldBroadcast));
         }
 
+        [CommandHandler("spendallxp", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, 0, "Spend all available XP on Attributes, Vitals and Skills.")]
+        public static void HandleSpendAllXp(Session session, params string[] parameters)
+        {
+            session.Player.SpendAllXp();
+
+            ChatPacket.SendServerMessage(session, "All available xp has been spent. You must now log out for the updated values to take effect.", ChatMessageType.Broadcast);
+        }
+
         // reportbug < code | content > < description >
         [CommandHandler("reportbug", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, 2,
             "Generate a Bug Report",
@@ -454,7 +462,7 @@ namespace ACE.Server.Command.Handlers
             var w = "";
             var g = "";
 
-            if (cg == "creature" || cg == "npc"|| cg == "item" || cg == "item")
+            if (cg == "creature" || cg == "npc" || cg == "item" || cg == "item")
             {
                 var objectId = new ObjectGuid();
                 if (session.Player.HealthQueryTarget.HasValue || session.Player.ManaQueryTarget.HasValue || session.Player.CurrentAppraisalTarget.HasValue)
