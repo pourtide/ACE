@@ -328,16 +328,31 @@ namespace ACE.Server.WorldObjects
             }
 
             var isAffecting = true;     // ??
+            var hasDurability = item.Durability.HasValue;
 
-            foreach (var spell in item.Biota.GetKnownSpellsIds(BiotaDatabaseLock))
+            foreach (var spellId in item.Biota.GetKnownSpellsIds(BiotaDatabaseLock))
             {
-                if (item.HasProcSpell((uint)spell))
+                if (item.HasProcSpell((uint)spellId))
                     continue;
 
-                if (spell == item.SpellDID)
+                if (spellId == item.SpellDID)
                     continue;
 
-                var success = CreateItemSpell(item, (uint)spell);
+                var spell = new Spell(spellId);
+
+                // prevent any equipable items from casting Epic or Legendary spells
+                if (spell.Name.Contains("Epic ") || spell.Name.Contains("Legendary "))
+                {
+                    continue;
+                } 
+
+                // if item is not loot generated we don't want them to cast any major spells
+                if (!hasDurability && spell.Name.Contains("Major"))
+                {
+                    continue;
+                }
+
+                var success = CreateItemSpell(item, (uint)spellId);
 
                 if (success)
                     isAffecting = true;
