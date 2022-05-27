@@ -253,21 +253,21 @@ namespace ACE.Server.WorldObjects
                 return;
             }
 
-            // if this is an ArmorRepairKit gem
+            // if this is an ItemRepairKit gem
             // TODO:
-            // refactor ArmorRepairKit logic to some other class, maybe a Durability Entity class
+            // refactor ItemRepairKit logic to some other class, maybe a ItemRepair Entity class
             if (WeenieClassId == 3000330)
             {
                 var durability = target.Durability;
-                var maxArmorDurability = (int)PropertyManager.GetLong("max_armor_durability").Item;
+                var maxDurability = (int)PropertyManager.GetLong("max_durability").Item;
 
-                // if the item isn't underwear and if the item has less than max durability, repair 
-                if (((target.ClothingPriority & (CoverageMask)CoverageMaskHelper.Underwear) == 0) && durability.HasValue && durability.Value < maxArmorDurability)
+                // if the item has less than max durability, repair 
+                if (durability.HasValue && durability.Value < maxDurability)
                 {
-                    target.SetProperty(PropertyInt.Durability, maxArmorDurability);
-                    target.LongDesc = $"Durability: {target.Durability} / {maxArmorDurability}";
+                    target.SetProperty(PropertyInt.Durability, maxDurability);
+                    target.LongDesc = $"Durability: {target.Durability} / {maxDurability}";
                     player.Session.Player.TryConsumeFromInventoryWithNetworking(3000330, 1);
-                    player.Session.Network.EnqueueSend(new GameMessageSystemChat($"Your armor item [{target.Name}] has been repaired to {target.Durability} / {maxArmorDurability}.", ChatMessageType.System));
+                    player.Session.Network.EnqueueSend(new GameMessageSystemChat($"Your armor item [{target.Name}] has been repaired to {target.Durability} / {maxDurability}.", ChatMessageType.System));
                     target.SaveBiotaToDatabase();
                     player.Session.Player.SendUseDoneEvent();
                 } else

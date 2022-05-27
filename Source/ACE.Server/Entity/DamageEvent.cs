@@ -322,7 +322,7 @@ namespace ACE.Server.Entity
 
                 var filteredArmorList = new List<WorldObject>();
 
-                var maxDurability = (int)PropertyManager.GetLong("max_armor_durability").Item;
+                var maxDurability = (int)PropertyManager.GetLong("max_durability").Item;
                 var durabilityDamage = (int)PropertyManager.GetLong("durability_damage").Item;
 
                 if (pkBattle)

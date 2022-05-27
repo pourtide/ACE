@@ -478,7 +478,7 @@ namespace ACE.Server.WorldObjects
             var inventory = GetAllPossessions();
 
             var durableItems = inventory.Where(i => i.Durability.HasValue).ToList();
-            var maxDurablity = (double)PropertyManager.GetLong("max_armor_durability").Item;
+            var maxDurablity = (double)PropertyManager.GetLong("max_durability").Item;
 
             foreach (var item in durableItems)
             {

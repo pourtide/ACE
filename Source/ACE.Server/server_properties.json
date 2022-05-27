@@ -502,7 +502,7 @@
       "Item": 0,
       "Description": "Fixes turning forever during windup. 0 = default / disabled, 1 = retry one time, 2 = retry two times, ..."
     },
-    "max_armor_durability": {
+    "max_durability": {
       "Item": 500,
       "Description": "the number of maximum durability points on loot generated armor"
     },
