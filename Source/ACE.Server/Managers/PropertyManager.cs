@@ -9,7 +9,6 @@ using log4net;
 
 using ACE.Database;
 using System.IO;
-using CsvHelper;
 using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
@@ -47,6 +46,7 @@ namespace ACE.Server.Managers
 
             if (Program.IsRunningInContainer && !GetString("content_folder").Equals("/ace/Content"))
                 ModifyString("content_folder", "/ace/Content");
+
 
             _workerThread = new Timer(300000);
             _workerThread.Elapsed += DoWork;
