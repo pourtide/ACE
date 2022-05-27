@@ -161,13 +161,10 @@ namespace ACE.Server.Factories
 
             //wo.LongDesc = GetLongDesc(wo);
 
-            // underclothes should not have durability
-            if (((wo.ClothingPriority & (CoverageMask)CoverageMaskHelper.Underwear) == 0))
-            {
-                wo.SetProperty(PropertyInt.Durability, 500);
+            // add durability to all loot generated armor
+            wo.SetProperty(PropertyInt.Durability, 500);
 
-                wo.LongDesc = $"Durability: {wo.Durability} / 500";
-            }
+            wo.LongDesc = $"Durability: {wo.Durability} / 500";
 
         }
 

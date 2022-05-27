@@ -3,6 +3,7 @@ using System.Linq;
 using ACE.Common;
 using ACE.Database.Models.World;
 using ACE.Entity.Enum;
+using ACE.Entity.Enum.Properties;
 using ACE.Server.Entity;
 using ACE.Server.Factories.Entity;
 using ACE.Server.Factories.Tables;
@@ -83,7 +84,12 @@ namespace ACE.Server.Factories
             //  if (wo.HasMutateFilter(MutateFilter.Value))     // fixme: data
                 MutateValue(wo, profile.Tier, roll);
 
-            wo.LongDesc = GetLongDesc(wo);
+            //wo.LongDesc = GetLongDesc(wo);
+
+            // add durability to all loot generated jewelry
+            wo.SetProperty(PropertyInt.Durability, 500);
+
+            wo.LongDesc = $"Durability: {wo.Durability} / 500";
         }
 
         private static bool GetMutateJewelryData(uint wcid)

@@ -4,6 +4,7 @@ using System.Linq;
 using ACE.Common;
 using ACE.Database.Models.World;
 using ACE.Entity.Enum;
+using ACE.Entity.Enum.Properties;
 using ACE.Server.Entity.Mutations;
 using ACE.Server.Factories.Entity;
 using ACE.Server.Factories.Enum;
@@ -153,8 +154,12 @@ namespace ACE.Server.Factories
                 MutateValue(wo, profile.Tier, roll);
 
             // long description
-            wo.LongDesc = GetLongDesc(wo);
+            //wo.LongDesc = GetLongDesc(wo);
 
+            // add durability to all loot generated melee weapon
+            wo.SetProperty(PropertyInt.Durability, 500);
+
+            wo.LongDesc = $"Durability: {wo.Durability} / 500";
             return true;
         }
 
