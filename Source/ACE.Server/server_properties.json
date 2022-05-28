@@ -629,7 +629,7 @@
       "Description": "Scales the amount of damage players take from Void Magic. Defaults to 0.5, as per retail. For earlier content where DRR isn\u0027t as readily available, this can be adjusted for balance."
     },
     "xp_modifier": {
-      "Item": 1,
+      "Item": 0.5,
       "Description": "scales the amount of xp received by players"
     },
     "spell_damage_modifier": {
@@ -777,7 +777,7 @@
       "Description": "The extra crit rating Thrown Weapons will get when imbued with CS. For every 1.0 added to this number, this equals 100 crit rating."
     },
     "heavy_weapons_damage": {
-      "Item": 14,
+      "Item": 0,
       "Description": "The amount of flat damage added to heavy weapons per tink. Note for each damage event the added damage will be randomized between 1 and this value. Default is 0."
     },
     "light_weapons_damage": {
