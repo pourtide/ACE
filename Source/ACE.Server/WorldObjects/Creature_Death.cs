@@ -55,7 +55,7 @@ namespace ACE.Server.WorldObjects
                     var modifer = PropertyManager.GetDouble("xp_modifier").Item;
                     OnDeath_GrantXP(modifer * 2);
                 } 
-            
+            }
 
             return GetDeathMessage(lastDamager, damageType, criticalHit);
         }
