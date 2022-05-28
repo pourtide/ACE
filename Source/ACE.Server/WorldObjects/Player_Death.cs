@@ -26,6 +26,38 @@ namespace ACE.Server.WorldObjects
         /// </summary>
         public Dictionary<ObjectGuid, DateTime> LootPermission;
 
+        public void HandleDurabilityOnDeath()
+        {
+            var equippedDurableItems = EquippedObjects.Values;
+
+            var maxDurablity = (double)PropertyManager.GetLong("max_durability").Item;
+            var damage = PropertyManager.GetLong("durability_damage").Item;
+
+            foreach (var item in equippedDurableItems)
+            {
+                // player death removes 5% of maximum durability
+                var rate = PropertyManager.GetDouble("durability_death_rate").Item;
+
+                item.Durability -= (int)(rate * maxDurablity);
+                item.LongDesc = $"Durability: {item.Durability} / {maxDurablity}";
+
+                if (item.Durability <= 0)
+                {
+                    item.Durability = 0;
+                    item.LongDesc = $"Durability: {item.Durability} / {maxDurablity} (BROKEN)";
+                    HandleActionPutItemInContainer(item.Guid.Full, Guid.Full, 0);
+                    Session.Network.EnqueueSend(
+                        new GameMessageSystemChat(
+                            $"Your armor item [{item.Name}] has been destroyed in battle. Purchase an Armor Repair Kit from the Quality of Life Vendor in Arwic to repair this item.", ChatMessageType.System));
+
+                    //if durability is less than or equal to zero, damage should result in no protection from this item so we don't add it to the filteredArmorList
+
+                }
+
+            }
+
+        }
+
         /// <summary>
         /// Called when a player dies, in conjunction with Die()
         /// </summary>
@@ -33,6 +65,9 @@ namespace ACE.Server.WorldObjects
         /// <param name="damageType">The damage type for the death message</param>
         public override DeathMessage OnDeath(DamageHistoryInfo lastDamager, DamageType damageType, bool criticalHit = false)
         {
+
+            HandleDurabilityOnDeath();
+
             var topDamager = DamageHistory.GetTopDamager(false);
 
             HandlePKDeathBroadcast(lastDamager, topDamager);
@@ -476,29 +511,6 @@ namespace ACE.Server.WorldObjects
 
             // get all items in inventory
             var inventory = GetAllPossessions();
-
-            var durableItems = inventory.Where(i => i.Durability.HasValue).ToList();
-            var maxDurablity = (double)PropertyManager.GetLong("max_durability").Item;
-
-            foreach (var item in durableItems)
-            {
-                // player death removes 5% of maximum durability
-                var rate = 0.05;
-                item.Durability -= (int)(rate * maxDurablity);
-                item.LongDesc = $"Durability: {item.Durability} / {maxDurablity}";
-
-                if (item.Durability <= 0)
-                {
-                    item.Durability = 0;
-                    item.LongDesc = $"Durability: {item.Durability} / {maxDurablity} (BROKEN)";
-                    HandleActionPutItemInContainer(item.Guid.Full, Guid.Full, 0);
-                    Session.Network.EnqueueSend(
-                        new GameMessageSystemChat(
-                            $"Your armor item [{item.Name}] has been destroyed in battle. Purchase an Armor Repair Kit from the Quality of Life Vendor in Arwic to repair this item.", ChatMessageType.System));
-
-                    //if durability is less than or equal to zero, damage should result in no protection from this item so we don't add it to the filteredArmorList
-                }
-            }
 
             // exclude pyreals from randomized death item calculation
             inventory = inventory.Where(i => i.WeenieClassId != coinStackWcid).ToList();
