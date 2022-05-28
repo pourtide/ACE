@@ -35,6 +35,9 @@ namespace ACE.Server.WorldObjects
 
             foreach (var item in equippedDurableItems)
             {
+                if (!item.Durability.HasValue)
+                    continue;
+
                 // player death removes 5% of maximum durability
                 var rate = PropertyManager.GetDouble("durability_death_rate").Item;
 

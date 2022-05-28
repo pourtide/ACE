@@ -133,6 +133,25 @@ namespace ACE.Server.WorldObjects
             IgnoreCollisions = true; ReportCollisions = false; Hidden = true;
         }
 
+        public void HandleDurabilityOnLogin()
+        {
+            var equippedDurableItems = EquippedObjects.Values;
+            var maxDurablity = (double)PropertyManager.GetLong("max_durability").Item;
+
+            foreach (var item in equippedDurableItems)
+            {
+                if (item.Durability.HasValue && item.Durability <= 0)
+                {
+                    item.Durability = 0;
+                    item.LongDesc = $"Durability: {item.Durability} / {maxDurablity} (BROKEN)";
+                    HandleActionPutItemInContainer(item.Guid.Full, Guid.Full, 0);
+                    Session.Network.EnqueueSend(
+                        new GameMessageSystemChat(
+                            $"Your armor item [{item.Name}] has been destroyed in battle. Purchase an Armor Repair Kit from the Quality of Life Vendor in Arwic to repair this item.", ChatMessageType.System));
+                }
+            }
+        }
+
         private void SetEphemeralValues()
         {
             ObjectDescriptionFlags |= ObjectDescriptionFlag.Player;
@@ -196,6 +215,8 @@ namespace ACE.Server.WorldObjects
             RecordCast = new RecordCast(this);
 
             AttackQueue = new AttackQueue(this);
+
+            HandleDurabilityOnLogin();
 
             if (!PlayerKillsPk.HasValue)
                 PlayerKillsPk = 0;
