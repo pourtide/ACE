@@ -48,12 +48,16 @@ namespace ACE.Server.WorldObjects
             if (KillQuest3 != null)
                 OnDeath_HandleKillTask(KillQuest3);
 
+            var modifer = PropertyManager.GetDouble("xp_modifier").Item;
+
             if (!IsOnNoDeathXPLandblock)
             {
                 if (IsOnHasDeathXPLandblock)
                 {
-                    var modifer = PropertyManager.GetDouble("xp_modifier").Item;
                     OnDeath_GrantXP(modifer * 2);
+                } else
+                {
+                    OnDeath_GrantXP(modifer);
                 } 
             }
 
