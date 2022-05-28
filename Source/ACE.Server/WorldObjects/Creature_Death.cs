@@ -49,7 +49,13 @@ namespace ACE.Server.WorldObjects
                 OnDeath_HandleKillTask(KillQuest3);
 
             if (!IsOnNoDeathXPLandblock)
-                OnDeath_GrantXP();
+            {
+                if (IsOnHasDeathXPLandblock)
+                {
+                    var modifer = PropertyManager.GetDouble("xp_modifier").Item;
+                    OnDeath_GrantXP(modifer * 2);
+                } 
+            
 
             return GetDeathMessage(lastDamager, damageType, criticalHit);
         }
@@ -164,7 +170,7 @@ namespace ACE.Server.WorldObjects
         /// <summary>
         /// Grants XP to players in damage history
         /// </summary>
-        public void OnDeath_GrantXP()
+        public void OnDeath_GrantXP(double modifier = 1)
         {
             if (this is Player && PlayerKillerStatus == PlayerKillerStatus.PKLite)
                 return;
@@ -192,7 +198,7 @@ namespace ACE.Server.WorldObjects
 
                 var totalXP = (XpOverride ?? 0) * damagePercent;
 
-                playerDamager.EarnXP((long)Math.Round(totalXP), XpType.Kill);
+                playerDamager.EarnXP((long)Math.Round(totalXP), XpType.Kill, ShareType.All, modifier);
 
                 // handle luminance
                 if (LuminanceAward != null)
@@ -706,6 +712,19 @@ namespace ACE.Server.WorldObjects
         }
 
         public bool IsOnNoDeathXPLandblock => Location != null ? NoDeathXP_Landblocks.Contains(Location.LandblockId.Landblock) : false;
+
+        public bool IsOnHasDeathXPLandblock => Location != null ? HasDeathXp_Landblocks.Contains(Location.LandblockId.Landblock) : false;
+
+        public static HashSet<ushort> HasDeathXp_Landblocks = new HashSet<ushort>()
+        {
+
+            0x02F0,
+            0x02F1,
+            0x02F2,
+            0x0103,
+            0x0104,
+            0x0105
+        };
 
         /// <summary>
         /// A list of landblocks the player gains no xp from creature kills

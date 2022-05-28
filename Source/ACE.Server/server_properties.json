@@ -193,7 +193,7 @@
         "Description":  "If False, then dispel gems will not work"
     },
     "equipmentsetid_enabled": {
-      "Item": true,
+      "Item": false,
       "Description": "enable this to allow adding EquipmentSetIDs to loot armor"
     },
     "equipmentsetid_name_decoration": {
@@ -205,7 +205,7 @@
       "Description": "If TRUE, enables the fast buffing trick from retail."
     },
     "fellow_busy_no_recruit": {
-      "Item": true,
+      "Item": false,
       "Description": "if FALSE, fellows can be recruited while they are busy, different from retail"
     },
     "fellow_kt_killer": {
@@ -221,7 +221,7 @@
       "Description": "if TRUE, applies EvenShare formula to fellowship quest reward XP (300% max bonus, defaults to false in retail)"
     },
     "gateway_ties_summonable": {
-      "Item": true,
+      "Item": false,
       "Description": "if disabled, players cannot summon ties from gateways. defaults to enabled, as in retail"
     },
     "housing_enabled": {
@@ -313,7 +313,7 @@
       "Description": "if enabled, when the player receives items from an NPC, they will be saved immediately"
     },
     "pk_server": {
-      "Item": false,
+      "Item": true,
       "Description": "set this to TRUE for darktide servers"
     },
     "pk_server_safe_training_academy": {
@@ -385,7 +385,7 @@
       "Description": "if enabled, smite applies damage via TakeDamage"
     },
     "spellcast_recoil_queue": {
-      "Item": false,
+      "Item": true,
       "Description": "if true, players can queue the next spell to cast during recoil animation"
     },
     "spell_projectile_ethereal": {
@@ -409,7 +409,7 @@
       "Description": "use the alternate trajectory solver for missiles and spell projectiles"
     },
     "universal_masteries": {
-      "Item": true,
+      "Item": false,
       "Description": "if TRUE, matches end of retail masteries - players wielding almost any weapon get \u002B5 DR, except if the weapon \u0022seems tough to master\u0022. if FALSE, players start with mastery of 1 melee and 1 ranged weapon type based on heritage, and can later re-select these 2 masteries"
     },
     "use_generator_rotation_offset": {
@@ -463,7 +463,7 @@
       "Description": "retail defaults to 1, 1 = standard subscription (same as 2 and 3), 4 grants ToD pre-order bonus item Asheron\u0027s Benediction"
     },
     "fellowship_even_share_level": {
-      "Item": 50,
+      "Item": 0,
       "Description": "level when fellowship XP sharing is no longer restricted"
     },
     "mansion_min_rank": {
@@ -517,23 +517,23 @@
   },
   "DoubleSettings": {
     "cantrip_drop_rate": {
-      "Item": 1,
+      "Item": 0,
       "Description": "Scales the chance for cantrips to drop in each tier. Defaults to 1.0, as per end of retail"
     },
     "minor_cantrip_drop_rate": {
-      "Item": 1,
+      "Item": 0,
       "Description": "Scales the chance for minor cantrips to drop, relative to other cantrip levels in the tier. Defaults to 1.0, as per end of retail"
     },
     "major_cantrip_drop_rate": {
-      "Item": 1,
+      "Item": 0,
       "Description": "Scales the chance for major cantrips to drop, relative to other cantrip levels in the tier. Defaults to 1.0, as per end of retail"
     },
     "epic_cantrip_drop_rate": {
-      "Item": 1,
+      "Item": 0,
       "Description": "Scales the chance for epic cantrips to drop, relative to other cantrip levels in the tier. Defaults to 1.0, as per end of retail"
     },
     "legendary_cantrip_drop_rate": {
-      "Item": 1,
+      "Item": 0,
       "Description": "Scales the chance for legendary cantrips to drop, relative to other cantrip levels in the tier. Defaults to 1.0, as per end of retail"
     },
     "advocate_fane_auto_bestow_level": {
@@ -541,7 +541,7 @@
       "Description": "the level that advocates are automatically bestowed by Advocate Fane if advocate_fane_auto_bestow is true"
     },
     "aetheria_drop_rate": {
-      "Item": 1,
+      "Item": 0,
       "Description": "Modifier for Aetheria drop rate, 1 being normal"
     },
     "chess_ai_start_time": {
@@ -557,7 +557,7 @@
       "Description": "the number of seconds a generator for regions at which spawns its next set of objects"
     },
     "equipmentsetid_drop_rate": {
-      "Item": 1,
+      "Item": 0,
       "Description": "Modifier for EquipmentSetID drop rate, 1 being normal"
     },
     "fast_missile_modifier": {
@@ -573,7 +573,7 @@
       "Description": "Scales the effectiveness of IgnoreMagicResist (ie. hollow weapons) in pvp battles. 1.0 = full effectiveness / ignore all resistances from life enchantments (default), 0.5 = half effectiveness / use half resistances from life enchantments, 0.0 = no effectiveness / use full resistances from life enchantments"
     },
     "luminance_modifier": {
-      "Item": 1,
+      "Item": 0,
       "Description": "Scales the amount of luminance received by players"
     },
     "melee_max_angle": {
@@ -597,7 +597,7 @@
       "Description": "scales all quest min delta time between solves, 1 being normal"
     },
     "rare_drop_rate_percent": {
-      "Item": 0.04,
+      "Item": 0,
       "Description": "Adjust the chance of a rare to spawn as a percentage. Default is 0.04, or 1 in 2,500. Max is 100, or every eligible drop."
     },
     "spellcast_max_angle": {
@@ -625,7 +625,7 @@
       "Description": "the maximum vitae penalty a player can have"
     },
     "void_pvp_modifier": {
-      "Item": 0.5,
+      "Item": 0,
       "Description": "Scales the amount of damage players take from Void Magic. Defaults to 0.5, as per retail. For earlier content where DRR isn\u0027t as readily available, this can be adjusted for balance."
     },
     "xp_modifier": {
