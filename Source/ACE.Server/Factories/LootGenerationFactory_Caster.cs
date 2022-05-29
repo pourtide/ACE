@@ -187,12 +187,12 @@ namespace ACE.Server.Factories
                 MutateValue(wo, profile.Tier, roll);
 
             // long description
-            //wo.LongDesc = GetLongDesc(wo);
+            wo.LongDesc = GetLongDesc(wo);
 
             // add durability to all loot generated casters
-            wo.SetProperty(PropertyInt.Durability, 500);
+            /*wo.SetProperty(PropertyInt.Durability, 500);
 
-            wo.LongDesc = $"Durability: {wo.Durability} / 500";
+            wo.LongDesc = $"Durability: {wo.Durability} / 500";*/
         }
 
         private static void MutateCaster_SpellDID(WorldObject wo, TreasureDeath profile)
