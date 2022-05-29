@@ -803,6 +803,7 @@ namespace ACE.Server.WorldObjects
             0x00D7,     // Jester's Prison
             0x00EA,     // Mhoire Armory
             0x015D,     // Mountain Cavern
+            0x01C9,     // Subway
             0x027F,     // East Fork Dam Hive
             0x03A7,     // Mount Elyrii Hive
             0x5764,     // Oubliette of Mhoire Castle
