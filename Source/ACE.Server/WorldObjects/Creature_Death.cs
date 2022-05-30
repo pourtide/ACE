@@ -49,12 +49,13 @@ namespace ACE.Server.WorldObjects
                 OnDeath_HandleKillTask(KillQuest3);
 
             var modifer = PropertyManager.GetDouble("xp_modifier").Item;
+            var xpLandblockBoost = PropertyManager.GetDouble("xp_landblock_boost").Item;
 
             if (!IsOnNoDeathXPLandblock)
             {
                 if (IsOnHasDeathXPLandblock)
                 {
-                    OnDeath_GrantXP(modifer * 2);
+                    OnDeath_GrantXP(modifer * xpLandblockBoost);
                 } else
                 {
                     OnDeath_GrantXP(modifer);
@@ -722,6 +723,7 @@ namespace ACE.Server.WorldObjects
         public static HashSet<ushort> HasDeathXp_Landblocks = new HashSet<ushort>()
         {
 
+            // citadels and bsds
             0x02F0,
             0x02F1,
             0x02F2,

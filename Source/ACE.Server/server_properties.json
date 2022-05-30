@@ -628,8 +628,12 @@
       "Item": 0,
       "Description": "Scales the amount of damage players take from Void Magic. Defaults to 0.5, as per retail. For earlier content where DRR isn\u0027t as readily available, this can be adjusted for balance."
     },
+    "xp_landblock_boost": {
+      "Item": 4,
+      "Description":  "scales the amount of xp received by players on xp boosted landblocks"
+    },
     "xp_modifier": {
-      "Item": 2,
+      "Item": 0.25,
       "Description": "scales the amount of xp received by players"
     },
     "spell_damage_modifier": {
