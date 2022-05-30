@@ -507,7 +507,7 @@
       "Description": "the number of maximum durability points on loot generated armor"
     },
     "durability_damage": {
-      "Item": 1,
+      "Item": 10,
       "Description": "the amount of durability points reduced per damage taken"
     },
     "pvp_damage_cap": {
@@ -629,7 +629,7 @@
       "Description": "Scales the amount of damage players take from Void Magic. Defaults to 0.5, as per retail. For earlier content where DRR isn\u0027t as readily available, this can be adjusted for balance."
     },
     "xp_landblock_boost": {
-      "Item": 6,
+      "Item": 8,
       "Description":  "scales the amount of xp received by players on xp boosted landblocks"
     },
     "xp_modifier": {
@@ -705,7 +705,7 @@
       "Description": "The amount that a thrown weapon with Crippling Blow will land a critical strike. Default is 0.05(5%). A value of 1.00 would be 100% crit strike chance. be CAREFUL"
     },
     "durability_death_rate": {
-        "Item": 0.05,
+        "Item": 0.2,
         "Description": "the percentage of durability that is lost on death (rate * max_durability"
     },
     "heavy_cb_damage": {
