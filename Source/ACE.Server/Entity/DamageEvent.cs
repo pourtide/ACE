@@ -351,10 +351,12 @@ namespace ACE.Server.Entity
 
                         filteredArmorList.Add(item);
                     });
+
+                    Armor = filteredArmorList;
                 }
 
                 // get armor modifiers
-                ArmorMod = attacker.GetArmorMod(playerDefender, DamageType, filteredArmorList, Weapon, ignoreArmorMod);
+                ArmorMod = attacker.GetArmorMod(playerDefender, DamageType, Armor, Weapon, ignoreArmorMod);
 
             }
             else
