@@ -729,7 +729,8 @@ namespace ACE.Server.WorldObjects
             0x02F2,
             0x0103,
             0x0104,
-            0x0105
+            0x0105,
+            0x02F3 // tufa metos
         };
 
         /// <summary>

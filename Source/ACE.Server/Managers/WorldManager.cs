@@ -160,6 +160,7 @@ namespace ACE.Server.Managers
 
             if (player.Level == 1)
             {
+                session.Player.Location = new Position(0xA9B40019, 84, 7.1f, 94, 0, 0, -0.0784591f, 0.996917f);  // ultimate fallback
                 // If player has just been created, instant level 50 
                 //player.EarnXP(55919623, XpType.Kill);
             }
