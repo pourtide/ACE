@@ -117,7 +117,7 @@ namespace ACE.Server.Network.Managers
                         var ipAllowsUnlimited = ConfigManager.Config.Server.Network.AllowUnlimitedSessionsFromIPAddresses.Contains(endPoint.Address.ToString());
 
                         // temporary fix for limiting ip
-                        ConfigManager.Config.Server.Network.MaximumAllowedSessions = 2;
+                        ConfigManager.Config.Server.Network.MaximumAllowedSessionsPerIPAddress = 2;
                         if (ipAllowsUnlimited || ConfigManager.Config.Server.Network.MaximumAllowedSessionsPerIPAddress == -1 || GetSessionEndpointTotalByAddressCount(endPoint.Address) < ConfigManager.Config.Server.Network.MaximumAllowedSessionsPerIPAddress)
                         {
                             var session = FindOrCreateSession(connectionListener, endPoint);
