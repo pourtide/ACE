@@ -182,7 +182,8 @@ namespace ACE.Server.WorldObjects
         /// </summary>
         public static uint GetMaxLevel()
         {
-            return (uint)DatManager.PortalDat.XpTable.CharacterLevelXPList.Count - 1;
+            //return (uint)DatManager.PortalDat.XpTable.CharacterLevelXPList.Count - 1;
+            return 126;
         }
 
         /// <summary>
