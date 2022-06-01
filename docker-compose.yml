@@ -48,7 +48,6 @@ services:
       - docker.env
     #environment:
       #- DB_RESTORE_TARGET=s3://pourtide-db-backup/dumps/db_backup_2022-05-21T00:02:25Z.tbz2
-
     volumes:
       - /etc/localtime:/etc/localtime:ro
 

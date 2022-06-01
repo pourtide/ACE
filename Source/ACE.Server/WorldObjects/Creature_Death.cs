@@ -679,7 +679,18 @@ namespace ACE.Server.WorldObjects
 
                 foreach (var item in selected)
                 {
-                    var wo = WorldObjectFactory.CreateNewWorldObject(item);
+                    WorldObject wo;
+                   
+                    if (WhitelistedLandblockTrophies.Contains(item.WeenieClassId) && IsOnHasDeathXPLandblock)
+                    {
+                        if (item.WeenieClassId == 19478 || item.WeenieClassId == 7043)
+                            wo = WorldObjectFactory.CreateNewWorldObject(3000382);
+                        else
+                            wo = WorldObjectFactory.CreateNewWorldObject(3000380);
+                    } else
+                    {
+                        wo = WorldObjectFactory.CreateNewWorldObject(item);
+                    }
 
                     if (wo != null)
                     {

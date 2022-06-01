@@ -27,6 +27,13 @@ namespace ACE.Server.WorldObjects
         /// </summary>
         public Dictionary<ObjectGuid, WorldObject> EquippedObjects { get; } = new Dictionary<ObjectGuid, WorldObject>();
 
+        public static HashSet<uint> WhitelistedLandblockTrophies = new HashSet<uint>()
+        {
+            7042, //small sinew
+            7043, // large sinew
+            19478, // sharp slave tusk
+        };
+
         /// <summary>
         /// The only time this should be used is to populate EquippedObjects from the ctor.
         /// </summary>
