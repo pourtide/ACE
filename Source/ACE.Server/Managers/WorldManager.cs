@@ -109,6 +109,41 @@ namespace ACE.Server.Managers
             });
         }
 
+        // return a new Position of a location
+        public static Position LocToPosition(string location)
+        {
+            var parameters = location.Split(" ");
+            uint cell;
+
+            if (parameters[0].StartsWith("0x"))
+            {
+                string strippedcell = parameters[0].Substring(2);
+                cell = (uint)int.Parse(strippedcell, System.Globalization.NumberStyles.HexNumber);
+            }
+            else
+                cell = (uint)int.Parse(parameters[0], System.Globalization.NumberStyles.HexNumber);
+
+            var positionData = new float[7];
+            for (uint i = 0u; i < 7u; i++)
+            {
+                if (i > 2 && parameters.Length < 8)
+                {
+                    positionData[3] = 1;
+                    positionData[4] = 0;
+                    positionData[5] = 0;
+                    positionData[6] = 0;
+                    break;
+                }
+
+                if (!float.TryParse(parameters[i + 1].Trim(new Char[] { ' ', '[', ']' }), out var position))
+                    throw new Exception();
+
+                positionData[i] = position;
+            }
+
+            return new Position(cell, positionData[0], positionData[1], positionData[2], positionData[4], positionData[5], positionData[6], positionData[3]);
+        }
+
         private static void DoPlayerEnterWorld(Session session, Character character, Biota playerBiota, PossessedBiotas possessedBiotas)
         {
             Player player;
@@ -160,9 +195,10 @@ namespace ACE.Server.Managers
 
             if (player.Level == 1)
             {
-                session.Player.Location = new Position(0xA9B40019, 84, 7.1f, 94, 0, 0, -0.0784591f, 0.996917f);  // ultimate fallback
-                // If player has just been created, instant level 50 
-                //player.EarnXP(55919623, XpType.Kill);
+                var onboardingPosition = LocToPosition("0xE3550014 [51.284737 72.112297 4.005000] -0.504449 0.000000 0.000000 0.863442");
+
+                session.Player.Sanctuary = onboardingPosition;
+                session.Player.Location = onboardingPosition;
             }
 
             if (stripAdminProperties) // continue stripping properties
@@ -281,7 +317,7 @@ namespace ACE.Server.Managers
             if (olthoiPlayerReturnedToLifestone)
                 session.Network.EnqueueSend(new GameMessageSystemChat("You have returned to the Olthoi Queen to serve the hive.", ChatMessageType.Broadcast));
             else if (playerLoggedInOnNoLogLandblock) // see http://acpedia.org/wiki/Mount_Elyrii_Hive
-                session.Network.EnqueueSend(new GameMessageSystemChat("The currents of portal space cannot return you from whence you came. Your previous location forbids login.", ChatMessageType.Broadcast));            
+                session.Network.EnqueueSend(new GameMessageSystemChat("The currents of portal space cannot return you from whence you came. Your previous location forbids login.", ChatMessageType.Broadcast));
         }
 
         private static string AppendLines(params string[] lines)

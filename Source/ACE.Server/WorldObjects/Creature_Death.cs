@@ -741,7 +741,11 @@ namespace ACE.Server.WorldObjects
             0x0103,
             0x0104,
             0x0105,
-            0x02F3 // tufa metos
+
+            0x02F3, // tufa metos
+            // Fort Aimura by shoushi
+            0xE454,
+            0xE355 
         };
 
         /// <summary>
