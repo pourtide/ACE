@@ -46,7 +46,7 @@ namespace ACE.Server.WorldObjects
 
         public override void ActOnUse(WorldObject activator)
         {
-            ActOnUse(activator, false);
+            ActOnUse(activator, true);
         }
 
         public void ActOnUse(WorldObject activator, bool confirmed = false)
@@ -118,7 +118,7 @@ namespace ACE.Server.WorldObjects
             }
 
             // consume xp
-            player.AvailableExperience -= AugmentationCost;
+            //player.AvailableExperience -= AugmentationCost;
 
             // consume augmentation gem
             player.TryConsumeFromInventoryWithNetworking(this, 1);
@@ -148,11 +148,11 @@ namespace ACE.Server.WorldObjects
                 return false;
             }
 
-            if (availableXP < augCost)
+            /*if (availableXP < augCost)
             {
                 player.SendWeenieError(WeenieError.AugmentationNotEnoughExperience);
                 return false;
-            }
+            }*/
 
             var type = (AugmentationType)(AugmentationStat ?? 0);
 
