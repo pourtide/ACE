@@ -637,11 +637,11 @@
       "Description": "scales the amount of xp received by players"
     },
     "spell_damage_modifier": {
-      "Item": 1,
+      "Item": 0.75,
       "Description": ""
     },
     "war_streak_spell_damage_modifier": {
-      "Item": 1,
+      "Item": 0.5,
       "Description": ""
     },
     "void_streak_spell_damage_modifier": {
