@@ -638,6 +638,11 @@ namespace ACE.Server.WorldObjects
                 List<WorldObject> items = LootGenerationFactory.CreateRandomLootObjects(DeathTreasure);
                 foreach (WorldObject wo in items)
                 {
+                    if (!IsOnHasDeathXPLandblock)
+                    {
+                        wo.Retained = true;
+                    }
+
                     if (corpse != null)
                         corpse.TryAddToInventory(wo);
                     else
