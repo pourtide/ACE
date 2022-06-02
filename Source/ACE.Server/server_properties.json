@@ -705,7 +705,7 @@
       "Description": "The amount that a thrown weapon with Crippling Blow will land a critical strike. Default is 0.05(5%). A value of 1.00 would be 100% crit strike chance. be CAREFUL"
     },
     "durability_death_rate": {
-        "Item": 0.2,
+        "Item": 0.1,
         "Description": "the percentage of durability that is lost on death (rate * max_durability"
     },
     "heavy_cb_damage": {
