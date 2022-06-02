@@ -17,7 +17,7 @@
       "Description": "If enabled, changes the aetheria healing over time messages from the default retail red color to green"
     },
     "allow_door_hold": {
-      "Item": true,
+      "Item": false,
       "Description": "enables retail behavior where standing on a door while it is closing keeps the door as ethereal until it is free from collisions, effectively holding the door open for other players"
     },
     "allow_fast_chug": {
@@ -483,7 +483,7 @@
       "Description": "the number of seconds between automatic player saves"
     },
     "rares_max_days_between": {
-      "Item": 45,
+      "Item": 365,
       "Description": "for rares_real_time_v2: the maximum number of days a player can go before a rare is generated on rare eligible creature kills"
     },
     "rares_max_seconds_between": {
@@ -601,7 +601,7 @@
       "Description": "Adjust the chance of a rare to spawn as a percentage. Default is 0.04, or 1 in 2,500. Max is 100, or every eligible drop."
     },
     "spellcast_max_angle": {
-      "Item": 20,
+      "Item": 50,
       "Description": "for advanced player spell casting, the maximum angle to target release a spell projectile. retail seemed to default to value of around 20, although some players seem to prefer a higher 45 degree angle"
     },
     "trophy_drop_rate": {
@@ -629,11 +629,11 @@
       "Description": "Scales the amount of damage players take from Void Magic. Defaults to 0.5, as per retail. For earlier content where DRR isn\u0027t as readily available, this can be adjusted for balance."
     },
     "xp_landblock_boost": {
-      "Item": 8,
+      "Item": 100,
       "Description":  "scales the amount of xp received by players on xp boosted landblocks"
     },
     "xp_modifier": {
-      "Item": 0.25,
+      "Item": 0.01,
       "Description": "scales the amount of xp received by players"
     },
     "spell_damage_modifier": {
