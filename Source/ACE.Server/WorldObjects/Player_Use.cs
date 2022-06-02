@@ -56,68 +56,30 @@ namespace ACE.Server.WorldObjects
                 return;
             }
 
-            // handle objects with built-in spells
-            if (sourceItem.SpellDID != null)
+            // handle casters with built-in spells
+            if (sourceItemIsEquipped)
             {
-                if (!RecipeManager.VerifyUse(this, sourceItem, target))
+                if (sourceItem.SpellDID != null)
                 {
-                    //var spell = new Spell((int)sourceItem.SpellDID);
-                    //if (spell != null)
-                    //    Session.Network.EnqueueSend(new GameEventCommunicationTransientString(Session, $"{spell.Name} cannot be cast on {target.Name}."));
-                    var usable = sourceItem.ItemUseable ?? Usable.Undef;
-                    var action = "";
-                    if (usable.HasFlag(Usable.Wielded))
-                        action = "wield";
-                    else if (usable.HasFlag(Usable.Contained))
-                        action = "contain";
-                    Session.Network.EnqueueSend(new GameEventCommunicationTransientString(Session, $"You must {action} the {sourceItem.Name} to use it."));
-                    SendUseDoneEvent();
-                    return;
-                }
-                // check activation requirements
-                var result = sourceItem.CheckUseRequirements(this);
-                if (!result.Success)
-                {
-                    if (result.Message != null)
-                        Session.Network.EnqueueSend(result.Message);
+                    // check activation requirements
+                    var result = sourceItem.CheckUseRequirements(this);
+                    if (!result.Success)
+                    {
+                        if (result.Message != null)
+                            Session.Network.EnqueueSend(result.Message);
 
-                    SendUseDoneEvent();
-                    return;
+                        SendUseDoneEvent();
+                    }
+                    else
+                        HandleActionCastTargetedSpell(targetObjectGuid, sourceItem.SpellDID ?? 0, true);
                 }
                 else
                 {
-                    HandleActionCastTargetedSpell(targetObjectGuid, sourceItem.SpellDID ?? 0, sourceItem);
-                    return;
+                    SendUseDoneEvent();
                 }
+
+                return;
             }
-
-            // handle casters with built-in spells
-            //if (sourceItemIsEquipped)
-            //{
-            //    if (sourceItem.SpellDID != null)
-            //    {
-            //        // check activation requirements
-            //        var result = sourceItem.CheckUseRequirements(this);
-            //        if (!result.Success)
-            //        {
-            //            if (result.Message != null)
-            //                Session.Network.EnqueueSend(result.Message);
-
-            //            SendUseDoneEvent();
-            //        }
-            //        else
-            //        {
-            //            HandleActionCastTargetedSpell(targetObjectGuid, sourceItem.SpellDID ?? 0, true);
-            //            return;
-            //        }
-            //    }
-            //    else
-            //    {
-            //        SendUseDoneEvent();
-            //    }
-
-            //    return;
-            //}
 
             if (IsTrading)
             {

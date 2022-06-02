@@ -77,13 +77,13 @@ namespace ACE.Server.WorldObjects
         /// Handles player targeted casting message
         /// </summary>
         /// <param name="builtInSpell">If TRUE, casting a built-in spell from a weapon</param>
-        public void HandleActionCastTargetedSpell(uint targetGuid, uint spellId, WorldObject casterItem = null)
+        public void HandleActionCastTargetedSpell(uint targetGuid, uint spellId, bool builtInSpell = false)
         {
             //Console.WriteLine($"{Name}.HandleActionCastTargetedSpell({targetGuid:X8}, {spellId}, {builtInSpell})");
 
             if (CombatMode != CombatMode.Magic)
             {
-                log.Error($"{Name}.HandleActionCastTargetedSpell({targetGuid:X8}, {spellId}, {casterItem?.Name}) - CombatMode mismatch {CombatMode}, LastCombatMode: {LastCombatMode}");
+                log.Error($"{Name}.HandleActionCastTargetedSpell({targetGuid:X8}, {spellId}, {builtInSpell}) - CombatMode mismatch {CombatMode}, LastCombatMode: {LastCombatMode}");
 
                 if (LastCombatMode == CombatMode.Magic)
                     CombatMode = CombatMode.Magic;
@@ -116,7 +116,7 @@ namespace ACE.Server.WorldObjects
 
             if (IsBusy && MagicState.CanQueue)
             {
-                MagicState.CastQueue = new CastQueue(CastQueueType.Targeted, targetGuid, spellId, casterItem);
+                MagicState.CastQueue = new CastQueue(CastQueueType.Targeted, targetGuid, spellId, builtInSpell);
                 MagicState.CanQueue = false;
                 return;
             }
@@ -126,7 +126,7 @@ namespace ACE.Server.WorldObjects
 
             // verify spell is contained in player's spellbook,
             // or in the weapon's spellbook in the case of built-in spells
-            if (!VerifySpell(spellId, casterItem))
+            if (!VerifySpell(spellId, builtInSpell))
             {
                 SendUseDoneEvent(WeenieError.MagicInvalidSpellType);
                 return;
@@ -141,7 +141,7 @@ namespace ACE.Server.WorldObjects
             }
 
             MagicState.OnCastStart();
-            MagicState.SetWindupParams(targetGuid, spellId, casterItem);
+            MagicState.SetWindupParams(targetGuid, spellId, builtInSpell);
 
             StartPos = new Physics.Common.Position(PhysicsObj.Position);
 
@@ -150,7 +150,7 @@ namespace ACE.Server.WorldObjects
 
             if (targetCategory != TargetCategory.WorldObject && targetCategory != TargetCategory.Wielded)
             {
-                if (!CreatePlayerSpell(target, targetCategory, spellId, casterItem))
+                if (!CreatePlayerSpell(target, targetCategory, spellId, builtInSpell))
                     MagicState.OnCastDone();
 
                 return;
@@ -179,7 +179,7 @@ namespace ACE.Server.WorldObjects
                         return;
                     }
 
-                    if (!CreatePlayerSpell(target, targetCategory, spellId, casterItem))
+                    if (!CreatePlayerSpell(target, targetCategory, spellId, builtInSpell))
                         MagicState.OnCastDone();
                 });
 
@@ -205,14 +205,38 @@ namespace ACE.Server.WorldObjects
 
             if (!checkAngle || IsWithinAngle(target))
             {
-                if (!CreatePlayerSpell(target, targetCategory, windupParams.SpellId, windupParams.CasterItem))
+                if (!CreatePlayerSpell(target, targetCategory, windupParams.SpellId, windupParams.BuiltInSpell))
                     MagicState.OnCastDone();
             }
             else
             {
                 // restart turn if required
                 if (PhysicsObj.MovementManager.MotionInterpreter.InterpretedState.TurnCommand == 0)
-                    TurnTo_Magic(target);
+                {
+                    var windUpRetryLimit = PropertyManager.GetLong("windup_turn_retry_number").Item;
+                    // Console.WriteLine($"windUpRetryLimit: {windUpRetryLimit}");
+                    if (windUpRetryLimit > 0)
+                    {
+                        if (windupParams.TurnTries < windUpRetryLimit)
+                        {
+                            windupParams.TurnTries += 1;
+                            // Console.WriteLine($"{Name} turn to in DoWindup try #{windupParams.TurnTries}/{windUpRetryLimit}");
+                            TurnTo_Magic(target);
+                        }
+                        else
+                        {
+                            // give up after trying to correct angle a few times..
+                            // Console.WriteLine($"{Name} turn to in DoWindup giving up..");
+                            MagicState.OnCastDone();
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        // If windup_turn_retry_number property is 0 try forever like before.
+                        TurnTo_Magic(target);
+                    }
+                }
                 else
                     MagicState.PendingTurnRelease = true;
             }
@@ -307,7 +331,7 @@ namespace ACE.Server.WorldObjects
 
             if (IsBusy && MagicState.CanQueue)
             {
-                MagicState.CastQueue = new CastQueue(CastQueueType.Untargeted, 0, spellId, null);
+                MagicState.CastQueue = new CastQueue(CastQueueType.Untargeted, 0, spellId, false);
                 MagicState.CanQueue = false;
                 return;
             }
@@ -336,10 +360,10 @@ namespace ACE.Server.WorldObjects
         /// or in the weapon's spellbook in the case of built-in spells
         /// </summary>
         /// <param name="builtInSpell">If TRUE, casting a built-in spell from a weapon</param>
-        public bool VerifySpell(uint spellId, WorldObject casterItem = null)
+        public bool VerifySpell(uint spellId, bool builtInSpell = false)
         {
-            if (casterItem != null)
-                return IsWeaponSpell(spellId, casterItem);
+            if (builtInSpell)
+                return IsWeaponSpell(spellId);
             else
                 return SpellIsKnown(spellId);
 
@@ -350,13 +374,9 @@ namespace ACE.Server.WorldObjects
         /// Returns TRUE if the currently equipped casting implement
         /// has a built-in spell
         /// </summary>
-        public bool IsWeaponSpell(uint spellId, WorldObject casterItem)
+        public bool IsWeaponSpell(uint spellId)
         {
             var caster = GetEquippedWand();
-
-            if (casterItem != null)
-                caster = casterItem;
-
             if (caster == null || caster.SpellDID == null)
                 return false;
 
@@ -555,7 +575,7 @@ namespace ACE.Server.WorldObjects
             return castingPreCheckStatus;
         }
 
-        public bool CalculateManaUsage(CastingPreCheckStatus castingPreCheckStatus, Spell spell, WorldObject target, WorldObject casterItem, out uint manaUsed)
+        public bool CalculateManaUsage(CastingPreCheckStatus castingPreCheckStatus, Spell spell, WorldObject target, bool isWeaponSpell, out uint manaUsed)
         {
             manaUsed = 0;
             if (castingPreCheckStatus == CastingPreCheckStatus.Success)
@@ -564,10 +584,10 @@ namespace ACE.Server.WorldObjects
                 manaUsed = 5;   // todo: verify with retail
 
             var currentMana = Mana.Current;
-            if (casterItem != null)
+            if (isWeaponSpell)
             {
-                //var caster = GetEquippedWand();
-                currentMana = (uint)(casterItem.ItemCurMana ?? 0);
+                var caster = GetEquippedWand();
+                currentMana = (uint)(caster.ItemCurMana ?? 0);
             }
 
             if (manaUsed > currentMana)
@@ -635,15 +655,15 @@ namespace ACE.Server.WorldObjects
                 windupTime = EnqueueMotionAction(castChain, spell.Formula.WindupGestures, CastSpeed, MotionStance.Magic);
         }
 
-        public void DoCastGesture(Spell spell, WorldObject casterItem, ActionChain castChain)
+        public void DoCastGesture(Spell spell, bool isWeaponSpell, ActionChain castChain)
         {
             MagicState.CastGesture = spell.Formula.CastGesture;
 
-            if (casterItem != null)
+            if (isWeaponSpell)
             {
-                //var caster = GetEquippedWand();
-                if (casterItem.UseUserAnimation != 0)
-                    MagicState.CastGesture = casterItem.UseUserAnimation;
+                var caster = GetEquippedWand();
+                if (caster.UseUserAnimation != 0)
+                    MagicState.CastGesture = caster.UseUserAnimation;
             }
 
             if (RecordCast.Enabled)
@@ -699,7 +719,7 @@ namespace ACE.Server.WorldObjects
                 return;
             }
 
-            DoCastSpell(state.Spell, state.Caster, state.MagicSkill, state.ManaUsed, state.Target, state.Status, checkAngle);
+            DoCastSpell(state.Spell, state.IsWeaponSpell, state.MagicSkill, state.ManaUsed, state.Target, state.Status, checkAngle);
         }
 
         public bool IsWithinAngle(WorldObject target)
@@ -731,7 +751,7 @@ namespace ACE.Server.WorldObjects
             return angle <= maxAngle;
         }
 
-        public void DoCastSpell(Spell spell, WorldObject caster, uint magicSkill, uint manaUsed, WorldObject target, CastingPreCheckStatus castingPreCheckStatus, bool checkAngle = true)
+        public void DoCastSpell(Spell spell, bool isWeaponSpell, uint magicSkill, uint manaUsed, WorldObject target, CastingPreCheckStatus castingPreCheckStatus, bool checkAngle = true)
         {
             if (target != null)
             {
@@ -755,7 +775,7 @@ namespace ACE.Server.WorldObjects
 
                         var actionChain = new ActionChain();
                         actionChain.AddDelaySeconds(rotateTime);
-                        actionChain.AddAction(this, () => DoCastSpell(spell, caster, magicSkill, manaUsed, target, castingPreCheckStatus, false));
+                        actionChain.AddAction(this, () => DoCastSpell(spell, isWeaponSpell, magicSkill, manaUsed, target, castingPreCheckStatus, false));
                         actionChain.EnqueueChain();
                     }
                     else
@@ -783,7 +803,7 @@ namespace ACE.Server.WorldObjects
                 return;
             }
 
-            DoCastSpell_Inner(spell, caster, manaUsed, target, castingPreCheckStatus);
+            DoCastSpell_Inner(spell, isWeaponSpell, manaUsed, target, castingPreCheckStatus);
         }
 
         public WorldObject TurnTarget;
@@ -820,7 +840,7 @@ namespace ACE.Server.WorldObjects
 
         public Physics.Common.Position StartPos { get; set; }
 
-        public void DoCastSpell_Inner(Spell spell, WorldObject casterItem, uint manaUsed, WorldObject target, CastingPreCheckStatus castingPreCheckStatus, bool finishCast = true)
+        public void DoCastSpell_Inner(Spell spell, bool isWeaponSpell, uint manaUsed, WorldObject target, CastingPreCheckStatus castingPreCheckStatus, bool finishCast = true)
         {
             if (RecordCast.Enabled)
                 RecordCast.Log($"DoCastSpell_Inner()");
@@ -835,9 +855,7 @@ namespace ACE.Server.WorldObjects
             }
 
             // consume mana
-            var caster = casterItem ?? GetEquippedWand();  // TODO: persist this from the beginning, since this is done with delay
-
-            var isWeaponSpell = casterItem != null;
+            var caster = GetEquippedWand();  // TODO: persist this from the beginning, since this is done with delay
 
             var itemCaster = isWeaponSpell ? caster : null;
 
@@ -985,11 +1003,11 @@ namespace ACE.Server.WorldObjects
         /// Method used for handling player targeted spell casts
         /// </summary>
         /// <param name="builtInSpell">If TRUE, casting a built-in spell from a weapon</param>
-        public bool CreatePlayerSpell(WorldObject target, TargetCategory targetCategory, uint spellId, WorldObject casterItem)
+        public bool CreatePlayerSpell(WorldObject target, TargetCategory targetCategory, uint spellId, bool builtInSpell = false)
         {
             var creatureTarget = target as Creature;
 
-            var spell = ValidateSpell(spellId, casterItem != null);
+            var spell = ValidateSpell(spellId, builtInSpell);
             if (spell == null)
                 return false;
 
@@ -998,8 +1016,8 @@ namespace ACE.Server.WorldObjects
 
             // if casting implement has spell built in,
             // use spellcraft from the item, instead of player's magic skill?
-            var caster = casterItem ?? GetEquippedWand();
-            var isWeaponSpell = casterItem != null && IsWeaponSpell(spell.Id, casterItem);
+            var caster = GetEquippedWand();
+            var isWeaponSpell = builtInSpell && IsWeaponSpell(spell.Id);
 
             // Grab player's skill level in the spell's Magic School
             var magicSkill = GetCreatureSkill(spell.School).Current;
@@ -1014,7 +1032,7 @@ namespace ACE.Server.WorldObjects
             var castingPreCheckStatus = GetCastingPreCheckStatus(spell, magicSkill, isWeaponSpell);
 
             // calculate mana usage
-            if (!CalculateManaUsage(castingPreCheckStatus, spell, target, casterItem, out var manaUsed))
+            if (!CalculateManaUsage(castingPreCheckStatus, spell, target, isWeaponSpell, out var manaUsed))
                 return false;
 
             // spell words
@@ -1027,9 +1045,9 @@ namespace ACE.Server.WorldObjects
             DoWindupGestures(spell, isWeaponSpell, spellChain);
 
             // cast spell
-            DoCastGesture(spell, casterItem, spellChain);
+            DoCastGesture(spell, isWeaponSpell, spellChain);
 
-            MagicState.SetCastParams(spell, casterItem, magicSkill, manaUsed, target, castingPreCheckStatus);
+            MagicState.SetCastParams(spell, isWeaponSpell, magicSkill, manaUsed, target, castingPreCheckStatus);
 
             if (!FastTick)
                 spellChain.AddAction(this, () => DoCastSpell(MagicState));
@@ -1139,7 +1157,7 @@ namespace ACE.Server.WorldObjects
             var castingPreCheckStatus = GetCastingPreCheckStatus(spell, magicSkill, false);
 
             // calculate mana usage
-            if (!CalculateManaUsage(castingPreCheckStatus, spell, null, null, out var manaUsed))
+            if (!CalculateManaUsage(castingPreCheckStatus, spell, null, false, out var manaUsed))
                 return false;
 
             // begin spellcasting
@@ -1153,10 +1171,10 @@ namespace ACE.Server.WorldObjects
             DoWindupGestures(spell, false, spellChain);
 
             // do cast gesture
-            DoCastGesture(spell, null, spellChain);
+            DoCastGesture(spell, false, spellChain);
 
             // cast untargeted spell
-            MagicState.SetCastParams(spell, null, magicSkill, manaUsed, null, castingPreCheckStatus);
+            MagicState.SetCastParams(spell, false, magicSkill, manaUsed, null, castingPreCheckStatus);
 
             if (!FastTick)
                 spellChain.AddAction(this, () => DoCastSpell(MagicState));
@@ -1302,7 +1320,7 @@ namespace ACE.Server.WorldObjects
 
             if (parms != null && tryFizzle)
             {
-                DoCastSpell_Inner(parms.Spell, parms.Caster, parms.ManaUsed, parms.Target, CastingPreCheckStatus.CastFailed, false);
+                DoCastSpell_Inner(parms.Spell, parms.IsWeaponSpell, parms.ManaUsed, parms.Target, CastingPreCheckStatus.CastFailed, false);
 
                 werror = WeenieError.YourSpellFizzled;
             }
@@ -1358,7 +1376,7 @@ namespace ACE.Server.WorldObjects
             if (MagicState.CastQueue != null)
             {
                 if (MagicState.CastQueue.Type == CastQueueType.Targeted)
-                    HandleActionCastTargetedSpell(MagicState.CastQueue.TargetGuid, MagicState.CastQueue.SpellId, MagicState.CastQueue.CasterItem);
+                    HandleActionCastTargetedSpell(MagicState.CastQueue.TargetGuid, MagicState.CastQueue.SpellId, MagicState.CastQueue.BuiltInSpell);
                 else
                     HandleActionMagicCastUnTargetedSpell(MagicState.CastQueue.SpellId);
             }
@@ -1424,4 +1442,3 @@ namespace ACE.Server.WorldObjects
         }
     }
 }
-
