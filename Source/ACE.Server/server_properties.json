@@ -633,7 +633,7 @@
       "Description":  "scales the amount of xp received by players on xp boosted landblocks"
     },
     "xp_modifier": {
-      "Item": 0.01,
+      "Item": 0.05,
       "Description": "scales the amount of xp received by players"
     },
     "spell_damage_modifier": {
