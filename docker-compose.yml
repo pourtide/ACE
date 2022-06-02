@@ -41,6 +41,7 @@ services:
       - docker.env
     volumes:
       - /etc/localtime:/etc/localtime:ro
+    network_mode: "host"
 
   ace-restore:
     image: databack/mysql-backup
