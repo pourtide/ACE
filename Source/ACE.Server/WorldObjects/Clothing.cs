@@ -24,6 +24,7 @@ namespace ACE.Server.WorldObjects
         public Clothing(Biota biota) : base(biota)
         {
             SetEphemeralValues();
+            SetDurability(biota);
         }
 
         private void SetEphemeralValues()

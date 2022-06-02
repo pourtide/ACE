@@ -21,6 +21,7 @@ namespace ACE.Server.WorldObjects
         public Caster(Biota biota) : base(biota)
         {
             SetEphemeralValues();
+            SetDurability(biota);
         }
 
         private void SetEphemeralValues()

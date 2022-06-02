@@ -21,6 +21,7 @@ namespace ACE.Server.WorldObjects
         public MissileLauncher(Biota biota) : base(biota)
         {
             SetEphemeralValues();
+            SetDurability(biota);
         }
 
         private void SetEphemeralValues()

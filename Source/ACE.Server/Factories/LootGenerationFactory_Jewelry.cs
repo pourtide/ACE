@@ -7,6 +7,7 @@ using ACE.Entity.Enum.Properties;
 using ACE.Server.Entity;
 using ACE.Server.Factories.Entity;
 using ACE.Server.Factories.Tables;
+using ACE.Server.Managers;
 using ACE.Server.WorldObjects;
 
 namespace ACE.Server.Factories
@@ -85,11 +86,13 @@ namespace ACE.Server.Factories
                 MutateValue(wo, profile.Tier, roll);
 
             //wo.LongDesc = GetLongDesc(wo);
+            var maxDurability = (int)PropertyManager.GetLong("max_durability").Item;
+            var durability = maxDurability;
+
+            wo.SetProperty(PropertyInt.Durability, durability);
+            wo.LongDesc = $"Durability: {durability} / {durability}";
 
             // add durability to all loot generated jewelry
-            wo.SetProperty(PropertyInt.Durability, 500);
-
-            wo.LongDesc = $"Durability: {wo.Durability} / 500";
         }
 
         private static bool GetMutateJewelryData(uint wcid)

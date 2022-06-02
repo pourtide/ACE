@@ -160,11 +160,16 @@ namespace ACE.Server.Factories
             MutateValue(wo, profile.Tier, roll);
 
             //wo.LongDesc = GetLongDesc(wo);
+            var maxDurability = (int)PropertyManager.GetLong("max_durability").Item;
+            var durability = maxDurability;
+
+            wo.SetProperty(PropertyInt.Durability, durability);
+            wo.LongDesc = $"Durability: {durability} / {durability}";
 
             // add durability to all loot generated armor
-            wo.SetProperty(PropertyInt.Durability, 500);
+            //wo.SetProperty(PropertyInt.Durability, 500);
 
-            wo.LongDesc = $"Durability: {wo.Durability} / 500";
+            //wo.LongDesc = $"Durability: {wo.Durability} / 500";
 
         }
 

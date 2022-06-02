@@ -98,6 +98,24 @@ namespace ACE.Server.WorldObjects
 
         public WorldObject() { }
 
+        public void SetDurability(Biota biota)
+        {
+            var rawdurability = biota.GetProperty(PropertyInt.Durability, BiotaDatabaseLock);
+            log.Info($"Name: {biota.GetName()}, Durability: {rawdurability}");
+            var hasDurability = rawdurability != null;
+
+            if (!hasDurability)
+            {
+                var maxDurability = (int)PropertyManager.GetLong("max_durability").Item;
+                var durability = maxDurability;
+
+                SetProperty(PropertyInt.Durability, durability);
+                LongDesc = $"Durability: {durability} / {durability}";
+
+                SaveBiotaToDatabase();
+            }
+        }
+
         /// <summary>
         /// A new biota will be created taking all of its values from weenie.
         /// </summary>
