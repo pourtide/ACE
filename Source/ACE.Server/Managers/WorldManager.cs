@@ -193,6 +193,8 @@ namespace ACE.Server.Managers
 
             session.SetPlayer(player);
 
+            session.Player.RecallsDisabled = false;
+
             if (player.Level == 1)
             {
                 var onboardingPosition = LocToPosition("0xE3550014 [51.284737 72.112297 4.005000] -0.504449 0.000000 0.000000 0.863442");
