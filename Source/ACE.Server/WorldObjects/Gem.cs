@@ -157,7 +157,10 @@ namespace ACE.Server.WorldObjects
 
                 // TODO: figure this out better
                 if (spell.MetaSpellType == SpellType.PortalSummon)
-                    TryCastSpell(spell, player, this, tryResist: false);
+                {
+                    player.Session.Network.EnqueueSend(new GameMessageSystemChat($"Portal gems are disabled on this server.", ChatMessageType.System));
+                    //TryCastSpell(spell, player, this, tryResist: false);
+                }
                 else if (spell.IsImpenBaneType || spell.IsItemRedirectableType)
                     player.TryCastItemEnchantment_WithRedirects(spell, player, this);
                 else
