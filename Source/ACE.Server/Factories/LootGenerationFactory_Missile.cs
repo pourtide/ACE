@@ -146,15 +146,7 @@ namespace ACE.Server.Factories
             // long description
             //wo.LongDesc = GetLongDesc(wo);
 
-            var maxDurability = (int)PropertyManager.GetLong("max_durability").Item;
-            var durability = maxDurability;
-
-            wo.SetProperty(PropertyInt.Durability, durability);
-            wo.LongDesc = $"Durability: {durability} / {durability}";
-
-            // add durability to all loot generated jewelry
-           /* wo.SetProperty(PropertyInt.Durability, 500);
-            wo.LongDesc = $"Durability: {wo.Durability} / 500";*/
+            wo.SetDurability();
         }
 
         private static string GetMissileScript(TreasureWeaponType weaponType, bool isElemental = false)

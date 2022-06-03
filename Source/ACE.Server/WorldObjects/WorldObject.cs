@@ -98,10 +98,10 @@ namespace ACE.Server.WorldObjects
 
         public WorldObject() { }
 
+        //TODO: move this to a Durability partial class of WorldObject
         public void SetDurability(Biota biota)
         {
             var rawdurability = biota.GetProperty(PropertyInt.Durability, BiotaDatabaseLock);
-            log.Info($"Name: {biota.GetName()}, Durability: {rawdurability}");
             var hasDurability = rawdurability != null;
 
             if (!hasDurability)
@@ -110,10 +110,23 @@ namespace ACE.Server.WorldObjects
                 var durability = maxDurability;
 
                 SetProperty(PropertyInt.Durability, durability);
+                SetProperty(PropertyInt.RepairsRemining, 3);
                 LongDesc = $"Durability: {durability} / {durability}";
 
                 SaveBiotaToDatabase();
             }
+        }
+        public void SetDurability()
+        {
+            var maxDurability = (int)PropertyManager.GetLong("max_durability").Item;
+
+            SetProperty(PropertyInt.Durability, maxDurability);
+            LongDesc = $"Durability: {maxDurability} / {maxDurability}";
+        }
+        public int RepairsRemaining
+        {
+            get => GetProperty(PropertyInt.RepairsRemining) ?? 3;
+            set { SetProperty(PropertyInt.RepairsRemining, value); }
         }
 
         /// <summary>

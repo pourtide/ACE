@@ -86,11 +86,7 @@ namespace ACE.Server.Factories
                 MutateValue(wo, profile.Tier, roll);
 
             //wo.LongDesc = GetLongDesc(wo);
-            var maxDurability = (int)PropertyManager.GetLong("max_durability").Item;
-            var durability = maxDurability;
-
-            wo.SetProperty(PropertyInt.Durability, durability);
-            wo.LongDesc = $"Durability: {durability} / {durability}";
+            wo.SetDurability();
 
             // add durability to all loot generated jewelry
         }

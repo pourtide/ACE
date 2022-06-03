@@ -11,11 +11,14 @@ using ACE.Server.Managers;
 using ACE.Server.Network.GameEvent.Events;
 using ACE.Server.Network.GameMessages.Messages;
 using ACE.Server.Physics;
+using log4net;
 
 namespace ACE.Server.WorldObjects
 {
     public class Gem : Stackable
     {
+        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         /// <summary>
         /// A new biota be created taking all of its values from weenie.
         /// </summary>
@@ -261,11 +264,21 @@ namespace ACE.Server.WorldObjects
                 var durability = target.Durability;
                 var maxDurability = (int)PropertyManager.GetLong("max_durability").Item;
 
+
                 // if the item has less than max durability, repair 
                 if (durability.HasValue && durability.Value < maxDurability)
                 {
-                    target.SetProperty(PropertyInt.Durability, maxDurability);
-                    target.LongDesc = $"Durability: {target.Durability} / {maxDurability}";
+                    var remaining = target.RepairsRemaining;
+
+                    if (remaining <= 0)
+                    {
+                        player.Session.Network.EnqueueSend(new GameMessageSystemChat($"Your armor has no repairs remaining.", ChatMessageType.System));
+                        player.Session.Player.SendUseDoneEvent(WeenieError.IncorrectTargetType);
+                        return;
+                    }
+
+                    target.SetDurability();
+                    target.RepairsRemaining = remaining - 1;
                     player.Session.Player.TryConsumeFromInventoryWithNetworking(3000330, 1);
                     player.Session.Network.EnqueueSend(new GameMessageSystemChat($"Your armor item [{target.Name}] has been repaired to {target.Durability} / {maxDurability}.", ChatMessageType.System));
                     target.SaveBiotaToDatabase();
