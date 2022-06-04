@@ -14,7 +14,7 @@ using ACE.Server.Network;
 using ACE.Server.Network.GameEvent.Events;
 using ACE.Server.Network.GameMessages.Messages;
 using ACE.Server.WorldObjects;
-
+using System.Linq;
 
 namespace ACE.Server.Command.Handlers
 {
@@ -29,6 +29,16 @@ namespace ACE.Server.Command.Handlers
         public static void HandlePop(Session session, params string[] parameters)
         {
             CommandHandlerHelper.WriteOutputInfo(session, $"Current world population: {PlayerManager.GetOnlineCount():N0}", ChatMessageType.Broadcast);
+        }
+
+        // dungeons
+        [CommandHandler("dungeons", AccessLevel.Player, CommandHandlerFlag.None, 0,
+            "Show current dungeons that are giving xp",
+            "")]
+        public static void HandleDungeons(Session session, params string[] parameters)
+        {
+            var message = $"The Current areas giving xp are: {String.Join(", ", DungeonManager.XpLandblocks.Select(d => d.Value.Name))}";
+            CommandHandlerHelper.WriteOutputInfo(session, message, ChatMessageType.Broadcast);
         }
 
         // quest info (uses GDLe formatting to match plugin expectations)

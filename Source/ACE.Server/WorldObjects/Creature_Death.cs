@@ -49,17 +49,13 @@ namespace ACE.Server.WorldObjects
                 OnDeath_HandleKillTask(KillQuest3);
 
             var modifer = PropertyManager.GetDouble("xp_modifier").Item;
-            var xpLandblockBoost = PropertyManager.GetDouble("xp_landblock_boost").Item;
 
             if (!IsOnNoDeathXPLandblock)
             {
-                if (IsOnHasDeathXPLandblock)
-                {
-                    OnDeath_GrantXP(modifer * xpLandblockBoost);
-                } else
+                if (IsOnXpLandblock)
                 {
                     OnDeath_GrantXP(modifer);
-                } 
+                }
             }
 
             return GetDeathMessage(lastDamager, damageType, criticalHit);
@@ -290,7 +286,7 @@ namespace ACE.Server.WorldObjects
                     TryHandleKillTask(playerDamager, killQuest, killTaskCredits, cap);
                 }
                 // check option that requires killer to have killtask to pass to fellows
-                else if (!PropertyManager.GetBool("fellow_kt_killer").Item)   
+                else if (!PropertyManager.GetBool("fellow_kt_killer").Item)
                 {
                     continue;
                 }
@@ -444,10 +440,10 @@ namespace ACE.Server.WorldObjects
 
                 var loot = GenerateTreasure(killer, null);
 
-                foreach(var item in loot)
+                foreach (var item in loot)
                 {
                     if (!string.IsNullOrEmpty(item.Quest)) // if the item has a Quest string, make the creature a "generator" of the item so that the pickup action applies the quest. 
-                        item.GeneratorId = Guid.Full; 
+                        item.GeneratorId = Guid.Full;
                     item.Location = new Position(Location);
                     LandblockManager.AddObject(item);
                 }
@@ -463,10 +459,10 @@ namespace ACE.Server.WorldObjects
             if (TreasureCorpse)
             {
                 // Hardcoded values from PCAPs of Treasure Pile Corpses, everything else lines up exactly with existing corpse weenie
-                corpse.SetupTableId  = 0x02000EC4;
+                corpse.SetupTableId = 0x02000EC4;
                 corpse.MotionTableId = 0x0900019B;
-                corpse.SoundTableId  = 0x200000C2;
-                corpse.ObjScale      = 0.4f;
+                corpse.SoundTableId = 0x200000C2;
+                corpse.ObjScale = 0.4f;
 
                 prefix = "Treasure";
             }
@@ -638,7 +634,7 @@ namespace ACE.Server.WorldObjects
                 List<WorldObject> items = LootGenerationFactory.CreateRandomLootObjects(DeathTreasure);
                 foreach (WorldObject wo in items)
                 {
-                    if (!IsOnHasDeathXPLandblock)
+                    if (!IsOnXpLandblock)
                     {
                         wo.Retained = true;
                     }
@@ -685,14 +681,15 @@ namespace ACE.Server.WorldObjects
                 foreach (var item in selected)
                 {
                     WorldObject wo;
-                   
-                    if (WhitelistedLandblockTrophies.Contains(item.WeenieClassId) && IsOnHasDeathXPLandblock)
+
+                    if (WhitelistedLandblockTrophies.Contains(item.WeenieClassId) && IsOnXpLandblock)
                     {
                         if (item.WeenieClassId == 19478 || item.WeenieClassId == 7043)
                             wo = WorldObjectFactory.CreateNewWorldObject(3000382);
                         else
                             wo = WorldObjectFactory.CreateNewWorldObject(3000380);
-                    } else
+                    }
+                    else
                     {
                         wo = WorldObjectFactory.CreateNewWorldObject(item);
                     }
@@ -734,24 +731,7 @@ namespace ACE.Server.WorldObjects
 
         public bool IsOnNoDeathXPLandblock => Location != null ? NoDeathXP_Landblocks.Contains(Location.LandblockId.Landblock) : false;
 
-        public bool IsOnHasDeathXPLandblock => Location != null ? HasDeathXp_Landblocks.Contains(Location.LandblockId.Landblock) : false;
-
-        public static HashSet<ushort> HasDeathXp_Landblocks = new HashSet<ushort>()
-        {
-
-            // citadels and bsds
-            0x02F0,
-            0x02F1,
-            0x02F2,
-            0x0103,
-            0x0104,
-            0x0105,
-
-            0x02F3, // tufa metos
-            // Fort Aimura by shoushi
-            0xE454,
-            0xE355 
-        };
+        public bool IsOnXpLandblock => Location != null ? DungeonManager.XpLandblocks.ContainsKey(Location.LandblockId.Landblock) : false;
 
         /// <summary>
         /// A list of landblocks the player gains no xp from creature kills
