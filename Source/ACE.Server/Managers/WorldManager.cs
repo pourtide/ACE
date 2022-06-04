@@ -24,6 +24,7 @@ using ACE.Server.Physics.Common;
 
 using Character = ACE.Database.Models.Shard.Character;
 using Position = ACE.Entity.Position;
+using System.Linq;
 
 namespace ACE.Server.Managers
 {
@@ -194,6 +195,15 @@ namespace ACE.Server.Managers
             session.SetPlayer(player);
 
             session.Player.RecallsDisabled = false;
+
+            // remove any items we no longer want in the game
+            var blacklistedItems = session.Player.GetAllPossessions().Where(wo => wo.Name.Contains("Hollow") || wo.Name.Contains("Weeping"));
+
+            foreach (var item in blacklistedItems)
+            {
+                session.Player.TryDequipObjectWithNetworking(item.Guid, out _, Player.DequipObjectAction.ConsumeItem);
+                session.Player.TryRemoveFromInventoryWithNetworking(item.Guid, out _, Player.RemoveFromInventoryAction.ConsumeItem);
+            }
 
             if (player.Level == 1)
             {

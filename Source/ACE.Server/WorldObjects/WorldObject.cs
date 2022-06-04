@@ -116,6 +116,7 @@ namespace ACE.Server.WorldObjects
                 SaveBiotaToDatabase();
             }
         }
+
         public void SetDurability()
         {
             var maxDurability = (int)PropertyManager.GetLong("max_durability").Item;
