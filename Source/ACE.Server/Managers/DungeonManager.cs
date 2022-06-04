@@ -30,16 +30,17 @@ namespace ACE.Server.Managers
         {
             new LandblockInformation(0x0104, "Ayan BSD"),
             new LandblockInformation(0xE454, "Fort Aimaru"),
+            new LandblockInformation(0x02F0, "Lin Citadel"),
         };
 
         private static List<LandblockInformation> FetchMedPopLandblocks = new List<LandblockInformation>()
         {
-            new LandblockInformation(0x02F1, "Qalabar Citadel"),
+            new LandblockInformation(0x0103, "Obsidian Plains BSD"),
         };
 
         private static List<LandblockInformation> FetchLargePopLandblocks = new List<LandblockInformation>()
         {
-            new LandblockInformation(0x0103, "Obsidian Plains BSD"),
+            new LandblockInformation(0x02F2, "Qalabar Citadel"),
         };
 
         private static void DoWork(Object source, ElapsedEventArgs e)
