@@ -9,7 +9,9 @@ using log4net;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Timers;
 
 namespace ACE.Server.Managers
@@ -18,11 +20,204 @@ namespace ACE.Server.Managers
     {
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private static Timer _workerThread;
+        private static Thread _workerThread;
 
-        private static TimeSpan HellgateTimeLimit;
+        private static Stopwatch HellgateWorkerInterval;
 
-        private static DateTime HellgateStartTime;
+        private static Stopwatch HellgateDungeonInterval;
+
+        private static Stopwatch HellgatePortalLifespanInterval;
+
+        public static void Initialize()
+        {
+            _workerThread = new Thread(new ThreadStart(DoWork));
+            _workerThread.Start();
+        }
+
+        private static List<uint> PortalWcids = new List<uint>()
+        {
+            3000100,
+            3000101,
+            3000102,
+            3000103,
+        };
+
+        private static List<WorldObject> PortalInstances = new List<WorldObject>();
+
+        private static  ConcurrentDictionary<string, Player> PlayersInHellgate = new ConcurrentDictionary<string, Player>();
+
+        private enum HellgateState
+        {
+            Open, Closed, InProgress
+        }
+
+        private static HellgateState State = HellgateState.Closed;
+
+        public static void AddPlayer(Player player)
+        {
+            if (PlayersInHellgate.TryAdd(player.Name, player))
+            {
+                var message = $"Player: {player.Name} has entered the hellgate";
+                log.Info(message);
+                log.Info($"Player count: {PlayerCount}");
+                PlayerManager.BroadcastToAll(new GameMessageSystemChat(message, ChatMessageType.WorldBroadcast));
+            }
+        }
+
+        public static void RemovePlayer(Player player)
+        {
+            if (PlayersInHellgate.TryRemove(player.Name, out player))
+            {
+                var message = $"Player: {player.Name} has left the hellgate";
+                log.Info(message);
+                log.Info($"Player count: {PlayerCount}");
+                WorldManager.ThreadSafeTeleport(player, new Position(player.Sanctuary));
+                PlayerManager.BroadcastToAll(new GameMessageSystemChat(message, ChatMessageType.WorldBroadcast));
+
+                if (PlayersInHellgate.IsEmpty)
+                    CloseHellgate();
+            }
+        }
+
+        public static bool ContainsPlayer(Player player)
+        {
+            return PlayersInHellgate.ContainsKey(player.Name);
+        }
+
+        public static int PlayerCount { get => PlayersInHellgate.Count; }
+
+        public static int MaxPlayers = 12;
+
+        private static void DeletePortalInstances()
+        {
+            foreach (var portal in PortalInstances)
+            {
+                WorldManager.EnqueueAction(new ActionEventDelegate(() => portal.DeleteObject()));
+            }
+
+            PortalInstances.Clear();
+        }
+
+        private static void CreatePortalInstances()
+        {
+            DeletePortalInstances();
+
+            HellgatePortalLifespanInterval.Start();
+            // quick and dirty shuffle
+            var portals = Portals.OrderBy(i => Guid.NewGuid()).ToList();
+
+            for (var i = 0; i < PortalWcids.Count(); i++)
+            {
+                var wo = WorldObjectFactory.CreateNewWorldObject(PortalWcids[i]);
+                wo.Location = WorldManager.LocToPosition(portals[i].Location);
+                wo.Lifespan = 60 * 5; // Hellgate portals are only up for 5 minutes
+                PortalInstances.Add(wo);
+
+                WorldManager.EnqueueAction(new ActionEventDelegate(() => wo.EnterWorld())); 
+            }
+
+            var message = $"The Current hellgates spawned are: {String.Join(", ", portals.Select(d => d.TownName).Take(PortalWcids.Count))}";
+
+            log.Info(message);
+            PlayerManager.BroadcastToAll(new GameMessageSystemChat(message, ChatMessageType.WorldBroadcast));
+        }
+
+        private static void DoWork()
+        {
+            HellgateWorkerInterval = new Stopwatch();
+            HellgateDungeonInterval = new Stopwatch();
+            HellgatePortalLifespanInterval = new Stopwatch();
+            HellgateWorkerInterval.Start();
+
+            CloseHellgate();
+
+            while (true)
+            {
+                if (HellgateWorkerInterval.ElapsedMilliseconds > 1000 * 60)
+                {
+                    CheckPortalLifespans();
+
+                    switch (State)
+                    {
+                        case HellgateState.Closed:
+                            HandleIsClosed();
+                            break;
+                        case HellgateState.Open:
+                            HandleIsOpen();
+                            break;
+                    }
+
+                    HellgateWorkerInterval.Restart();
+                }
+            }
+        }
+
+        private static void CheckPortalLifespans()
+        {
+            foreach (var portal in PortalInstances.ToList())
+            {
+                if (portal.IsLifespanSpent)
+                    PortalInstances.Remove(portal);
+            }
+        }
+
+        private static void HandleIsOpen()
+        {
+            log.Info("handleisopen");
+
+            // If portals have been up for 5 minutes delete them
+            if (HellgatePortalLifespanInterval.ElapsedMilliseconds > 1000 * 60 * 5)
+            {
+                DeletePortalInstances();
+                HellgatePortalLifespanInterval.Reset();
+            }
+
+            if (HellgateDungeonInterval.ElapsedMilliseconds >= 1000 * 60 * 30)
+                CloseHellgate();
+
+            if (PortalInstances.Count < 1 && PlayersInHellgate.Count < 1)
+                CloseHellgate();
+
+        }
+
+        private static void CloseHellgate()
+        {
+
+            PlayerManager.BroadcastToAll(new GameMessageSystemChat("Hellgate is now closing. New portals will open shortly", ChatMessageType.WorldBroadcast));
+            foreach (var player in PlayerManager.GetAllOnline())
+            {
+                if (player.IsInHellgate)
+                {
+                    RemovePlayer(player);
+                }
+            }
+
+            DeletePortalInstances();
+            PlayersInHellgate.Clear();
+            HellgateDungeonInterval.Reset();
+            State = HellgateState.Closed;
+        }
+
+        private static void OpenHellgate()
+        {
+            PlayerManager.BroadcastToAll(new GameMessageSystemChat("Hellgate is now open!", ChatMessageType.WorldBroadcast));
+            CreatePortalInstances();
+            HellgateDungeonInterval.Start();
+            State = HellgateState.Open;
+        }
+
+        private static void HandleIsClosed()
+        {
+            log.Info("handleisclosed");
+
+            var hasPlayers = PlayersInHellgate.Count > 0;
+            var hasPortals = PortalInstances.Count > 0;
+
+            if (!hasPortals && !hasPlayers)
+            {
+                OpenHellgate();
+            }
+        }
 
         public static List<HellGatePortal> Portals = new List<HellGatePortal>()
         {
@@ -54,191 +249,6 @@ namespace ACE.Server.Managers
                 "0x90580003 [12.683186 53.629936 8.948068] -0.138752 0.000000 0.000000 0.990327",
                 "Al-Arqas")
         };
-
-        private static List<uint> PortalWcids = new List<uint>()
-        {
-            3000100,
-            3000101,
-            3000102,
-            3000103,
-        };
-
-        private static List<WorldObject> PortalInstances = new List<WorldObject>();
-
-        private static  ConcurrentDictionary<string, Player> PlayersInHellgate = new ConcurrentDictionary<string, Player>();
-
-        private enum HellgateState
-        {
-            Open, Closed, InProgress
-        }
-
-        private static HellgateState State = HellgateState.Closed;
-
-        public static void AddPlayer(Player player)
-        {
-            if (PlayersInHellgate.TryAdd(player.Name, player))
-            {
-                log.Info($"Player: {player.Name} has been added to the hellgate");
-                log.Info($"Player count: {PlayerCount}");
-            }
-        }
-
-        public static void RemovePlayer(Player player)
-        {
-            if (PlayersInHellgate.TryRemove(player.Name, out player))
-            {
-                log.Info($"Player: {player.Name} has been removed from the hellgate");
-                log.Info($"Player count: {PlayerCount}");
-                WorldManager.ThreadSafeTeleport(player, new Position(player.Sanctuary));
-                EndHellgate();
-            }
-        }
-
-        public static bool ContainsPlayer(Player player)
-        {
-            return PlayersInHellgate.ContainsKey(player.Name);
-        }
-
-        public static int PlayerCount { get => PlayersInHellgate.Count; }
-
-        public static int MaxPlayers = 6;
-
-        public static void Initialize()
-        {
-            _workerThread = new Timer(1000 * 60 * 5);
-            _workerThread.Elapsed += DoWork;
-            _workerThread.AutoReset = true;
-            _workerThread.Start();
-
-            HandleIsClosed();
-        }
-
-        private static void DeletePortalInstances()
-        {
-            foreach (var portal in PortalInstances)
-            {
-                WorldManager.EnqueueAction(new ActionEventDelegate(() => portal.DeleteObject()));
-            }
-
-            PortalInstances.Clear();
-        }
-
-        private static void CreatePortalInstances()
-        {
-            DeletePortalInstances();
-
-            // quick and dirty shuffle
-            var portals = Portals.OrderBy(i => Guid.NewGuid()).ToList();
-
-            for (var i = 0; i < PortalWcids.Count(); i++)
-            {
-                var wo = WorldObjectFactory.CreateNewWorldObject(PortalWcids[i]);
-                wo.Location = WorldManager.LocToPosition(portals[i].Location);
-                wo.Lifespan = 60 * 5; // Hellgate portals are only up for 5 minutes
-                PortalInstances.Add(wo);
-
-                WorldManager.EnqueueAction(new ActionEventDelegate(() => wo.EnterWorld())); 
-            }
-
-            var message = $"The Current hellgates spawned are: {String.Join(", ", portals.Select(d => d.TownName).Take(PortalWcids.Count))}";
-
-            log.Info(message);
-            PlayerManager.BroadcastToAll(new GameMessageSystemChat(message, ChatMessageType.WorldBroadcast));
-        }
-
-        private static void DoWork(Object source, ElapsedEventArgs e)
-        {
-            foreach (var portal in PortalInstances)
-            {
-                if (portal.IsLifespanSpent)
-                {
-                    PortalInstances.Remove(portal);
-                }
-            }
-
-            if (State == HellgateState.InProgress)
-            {
-                HandleInProgress();
-            } else if (State == HellgateState.Closed)
-            {
-                HandleIsClosed();
-            } else if (State == HellgateState.Open)
-            {
-                HandleIsOpen();
-            }
-        }
-
-        private static void HandleIsOpen()
-        {
-            log.Info("handleisopen");
-
-            DeletePortalInstances();
-
-            HellgateStartTime = DateTime.UtcNow;
-            HellgateTimeLimit = TimeSpan.FromMinutes(30);
-            State = HellgateState.InProgress;
-        }
-
-        private static void HandleIsClosed()
-        {
-            log.Info("handleisclosed");
-
-            var isEmpty = PlayersInHellgate.IsEmpty;
-
-            if (PortalInstances.Count < 1 && isEmpty)
-            {
-                CreatePortalInstances();
-            }
-
-            if (!isEmpty)
-            {
-                State = HellgateState.Open;
-            }
-        }
-
-        public static void EndHellgate()
-        {
-            if (PlayersInHellgate.IsEmpty)
-                HandleInProgress(true);
-        }
-
-        private static void HandleInProgress(bool force = false)
-        {
-            log.Info("handleinprogress");
-            var hasEnded = CheckIfTimeExpired();
-
-            if (hasEnded || force || PlayersInHellgate.IsEmpty)
-            {
-                foreach (var player in PlayersInHellgate)
-                {
-                    WorldManager.ThreadSafeTeleport(player.Value, player.Value.Sanctuary);
-                }
-
-                PlayersInHellgate.Clear();
-                State = HellgateState.Closed;
-            }
-        }
-
-        private static bool CheckIfTimeExpired()
-        {
-            var now = DateTime.UtcNow;
-            var expired = (now - HellgateStartTime);
-            var limit = HellgateTimeLimit;
-
-            log.Info("Hellgate time has expired");
-            log.Info(expired);
-            log.Info(now);
-            log.Info(expired.TotalMinutes);
-            log.Info(expired.TotalMinutes > limit.TotalMinutes);
-            log.Info(limit.TotalMinutes);
-
-            if (expired.TotalMinutes > HellgateTimeLimit.TotalMinutes)
-            {
-                return true;
-            }
-
-            return false;
-        }
 
         public class HellGatePortal
         {

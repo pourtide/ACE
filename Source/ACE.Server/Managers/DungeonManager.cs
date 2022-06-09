@@ -14,18 +14,28 @@ namespace ACE.Server.Managers
     {
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private static Timer _workerThread;
-
         public static readonly ConcurrentDictionary<ushort, LandblockInformation> XpLandblocks = new ConcurrentDictionary<ushort, LandblockInformation>();
+
+        private static readonly TimeSpan DoWorkInterval = TimeSpan.FromMinutes(3);
+
+        private static DateTime LastDoWorkCheck;
 
         public static void Initialize()
         {
             LoadSmallPopLandblocks();
-            _workerThread = new Timer(1000 * 60 * 60);
-            _workerThread.Elapsed += DoWork;
-            _workerThread.AutoReset = true;
-            _workerThread.Start();
+            LastDoWorkCheck = DateTime.Now;
         }
+
+        public static void Tick()
+        {
+            var now = DateTime.UtcNow;
+            if (now - LastDoWorkCheck >= DoWorkInterval)
+            {
+                LastDoWorkCheck = now;
+                DoWork();
+            }
+        }
+
         private static List<LandblockInformation> FetchSmallPopLandblocks = new List<LandblockInformation>()
         {
             new LandblockInformation(0x0104, "Ayan BSD"),
@@ -44,8 +54,10 @@ namespace ACE.Server.Managers
             new LandblockInformation(0x02F2, "Qalabar Citadel"),
         };
 
-        private static void DoWork(Object source, ElapsedEventArgs e)
+        private static void DoWork()
         {
+            log.Info("DungeonManager is scanning dungeons....");
+
             var pop = PlayerManager.GetOnlineCount();
 
             if (pop >= 30)
@@ -59,6 +71,7 @@ namespace ACE.Server.Managers
                 LoadSmallPopLandblocks();
             }
         }
+
         private static void LoadSmallPopLandblocks()
         {
             var blacklisted = FetchLargePopLandblocks.Concat(FetchMedPopLandblocks);
