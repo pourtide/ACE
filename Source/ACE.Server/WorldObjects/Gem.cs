@@ -76,6 +76,12 @@ namespace ACE.Server.WorldObjects
                 return;
             }
 
+            if (WeenieClassId == 4000228)
+            {
+                log.Info("Hellgate escape gem used, removing player from hellgate players list");
+                HellgateManager.RemovePlayer(player);
+            }
+
             // handle rare gems
             if (RareId != null && player.GetCharacterOption(CharacterOption.ConfirmUseOfRareGems) && !confirmed)
             {

@@ -12,6 +12,9 @@ using ACE.Server.Entity.Actions;
 using ACE.Server.Managers;
 using ACE.Server.Network.GameEvent.Events;
 using ACE.Server.Network.GameMessages.Messages;
+using System;
+using System.Collections.Generic;
+using ACE.Server.Factories;
 
 namespace ACE.Server.WorldObjects
 {
@@ -92,6 +95,9 @@ namespace ACE.Server.WorldObjects
 
         public bool IsGateway { get => WeenieClassId == 1955; }
 
+
+        public bool IsHellgate { get => WeenieClassId == 3000100 || WeenieClassId == 3000101 || WeenieClassId == 3000102 || WeenieClassId == 3000103; }
+
         //public override void OnActivate(WorldObject activator)
         //{
         //    if (activator is Creature creature)
@@ -126,6 +132,9 @@ namespace ACE.Server.WorldObjects
 
             if (player.Teleporting)
                 return new ActivationResult(false);
+
+            if (!PortalOpen)
+                return new ActivationResult(new GameEventWeenieError(player.Session, WeenieError.PlayersMayNotUsePortal));
 
             if (Destination == null)
             {
@@ -241,6 +250,18 @@ namespace ACE.Server.WorldObjects
                     // You must be an Advocate to interact with that portal.
                     return new ActivationResult(new GameEventWeenieError(player.Session, WeenieError.YouMustBeAnAdvocateToUsePortal));
                 }
+
+                if (IsHellgate && PortalOpen)
+                {
+                    PortalOpen = false; // this locks reads until we have checked all requirements for hellgate
+
+                    var isValid = CheckHellgateRequirements(activator);
+
+                    if (!isValid)
+                    {
+                        return new ActivationResult(new GameEventWeenieError(player.Session, WeenieError.PlayersMayNotUsePortal));
+                    }
+                }
             }
 
             if (QuestRestriction != null && !player.IgnorePortalRestrictions)
@@ -264,6 +285,72 @@ namespace ACE.Server.WorldObjects
             }
 
             return new ActivationResult(true);
+        }
+
+        private void CloseHellgatePortal()
+        {
+            DeleteObject();
+        }
+
+        private bool CheckHellgateRequirements(WorldObject activator)
+        {
+            var player = activator as Player;
+
+            if (HellgateManager.PlayerCount > HellgateManager.MaxPlayers)
+            {
+                CloseHellgatePortal();
+                return false;
+            }
+
+            if (HellgateManager.ContainsPlayer(player))
+            {
+                return false;
+            }
+
+            var fellowship = player.Fellowship;
+
+            if (fellowship == null)
+                return false;
+
+            var members = fellowship.GetFellowshipMembers();
+
+            if (HellgateManager.PlayerCount + members.Count > HellgateManager.MaxPlayers)
+                return false;
+
+            var areMembersValid = CheckFellowshipMembers(members);
+
+            if (!areMembersValid)
+                return false;
+
+            foreach (var member in members)
+            {
+                HellgateManager.AddPlayer(member.Value);
+                WorldManager.ThreadSafeTeleport(member.Value, new Position(Destination));
+            }
+
+            CloseHellgatePortal();
+
+            return true;
+        }
+
+        private bool CheckFellowshipMembers(Dictionary<uint, Player> members)
+        {
+            if (members.Count > 3)
+                return false;
+
+            foreach(var member in members)
+            {
+                if (HellgateManager.ContainsPlayer(member.Value))
+                    return false;
+
+                if (member.Value.Level < 80)
+                    return false;
+
+                if (member.Value.IsNPK)
+                    return false;
+            }
+
+            return true;
         }
 
         public override void ActOnUse(WorldObject activator)

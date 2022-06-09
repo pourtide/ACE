@@ -32,6 +32,7 @@ namespace ACE.Server.WorldObjects
             7042, //small sinew
             7043, // large sinew
             19478, // sharp slave tusk
+            29204, // tusker spit
         };
 
         /// <summary>

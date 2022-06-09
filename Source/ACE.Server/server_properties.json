@@ -521,19 +521,19 @@
       "Description": "Scales the chance for cantrips to drop in each tier. Defaults to 1.0, as per end of retail"
     },
     "minor_cantrip_drop_rate": {
-      "Item": 0,
+      "Item": 1,
       "Description": "Scales the chance for minor cantrips to drop, relative to other cantrip levels in the tier. Defaults to 1.0, as per end of retail"
     },
     "major_cantrip_drop_rate": {
-      "Item": 0,
+      "Item": 1,
       "Description": "Scales the chance for major cantrips to drop, relative to other cantrip levels in the tier. Defaults to 1.0, as per end of retail"
     },
     "epic_cantrip_drop_rate": {
-      "Item": 0,
+      "Item": 1,
       "Description": "Scales the chance for epic cantrips to drop, relative to other cantrip levels in the tier. Defaults to 1.0, as per end of retail"
     },
     "legendary_cantrip_drop_rate": {
-      "Item": 0,
+      "Item": 1,
       "Description": "Scales the chance for legendary cantrips to drop, relative to other cantrip levels in the tier. Defaults to 1.0, as per end of retail"
     },
     "advocate_fane_auto_bestow_level": {

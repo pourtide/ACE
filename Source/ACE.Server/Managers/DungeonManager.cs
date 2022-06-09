@@ -31,6 +31,7 @@ namespace ACE.Server.Managers
             new LandblockInformation(0x0104, "Ayan BSD"),
             new LandblockInformation(0xE454, "Fort Aimaru"),
             new LandblockInformation(0x02F0, "Lin Citadel"),
+            new LandblockInformation(0x0287, "Hellgate")
         };
 
         private static List<LandblockInformation> FetchMedPopLandblocks = new List<LandblockInformation>()

@@ -71,6 +71,11 @@ namespace ACE.Server.WorldObjects
 
             HandleDurabilityOnDeath();
 
+            if (HellgateManager.ContainsPlayer(this))
+            {
+                HellgateManager.RemovePlayer(this);
+            }
+
             var topDamager = DamageHistory.GetTopDamager(false);
 
             HandlePKDeathBroadcast(lastDamager, topDamager);

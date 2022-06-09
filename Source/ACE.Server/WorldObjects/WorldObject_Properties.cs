@@ -1522,6 +1522,12 @@ namespace ACE.Server.WorldObjects
             set { if (!value) RemoveProperty(PropertyBool.Stuck); else SetProperty(PropertyBool.Stuck, value); }
         }
 
+        public bool PortalOpen
+        {
+            get => GetProperty(PropertyBool.PortalOpen) ?? true;
+            set { if (!value) RemoveProperty(PropertyBool.PortalOpen); else SetProperty(PropertyBool.PortalOpen, value); }
+        }
+
         /// <summary>
         /// If this property is not defined, defaults to true
         /// </summary>

@@ -90,7 +90,8 @@ namespace ACE.Server.WorldObjects
             var player = worldObject as Player;
             var behind = player != null && player.GetRelativeDir(this).HasFlag(Quadrant.Back);
 
-            if (!IsLocked || behind)
+            //if (!IsLocked || behind)
+            if (!IsLocked)
             {
                 if (!IsOpen)
                     Open(worldObject.Guid);

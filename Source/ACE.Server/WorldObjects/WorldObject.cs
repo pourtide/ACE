@@ -82,6 +82,10 @@ namespace ACE.Server.WorldObjects
         public bool IsRanged { get => IsAmmoLauncher || IsThrownWeapon; }
         public bool IsCaster { get => DefaultCombatStyle != null && (DefaultCombatStyle == CombatStyle.Magic); }
 
+        public bool IsInHellgate => Location != null ? Location.LandblockId.Landblock == 0x0287 : false;
+
+
+
         public EmoteManager EmoteManager;
         public EnchantmentManagerWithCaching EnchantmentManager;
 

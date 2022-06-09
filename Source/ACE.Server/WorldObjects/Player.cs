@@ -516,12 +516,19 @@ namespace ACE.Server.WorldObjects
         /// </summary>
         public bool LogOut(bool clientSessionTerminatedAbruptly = false, bool forceImmediate = false)
         {
-            if (PKLogoutActive && !forceImmediate)
+            if (IsInHellgate)
+            {
+                log.Info("Player logged out removing from hellgate player list");
+                HellgateManager.RemovePlayer(this);
+            }
+
+            if ((PKLogoutActive && !forceImmediate))
             {
                 //Session.Network.EnqueueSend(new GameEventWeenieError(Session, WeenieError.YouHaveBeenInPKBattleTooRecently));
                 Session.Network.EnqueueSend(new GameMessageSystemChat("Beginning delayed player killer logoff...", ChatMessageType.Broadcast));
 
-                if (!PKLogout)
+
+                if (!PKLogout || IsInHellgate)
                 {
                     PKLogout = true;
 
@@ -531,6 +538,7 @@ namespace ACE.Server.WorldObjects
                     LogoffTimestamp = Time.GetFutureUnixTime(PropertyManager.GetLong("pk_timer").Item);
                     PlayerManager.AddPlayerToLogoffQueue(this);
                 }
+
                 return false;
             }
 

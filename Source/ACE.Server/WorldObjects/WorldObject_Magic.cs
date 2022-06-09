@@ -120,7 +120,7 @@ namespace ACE.Server.WorldObjects
         {
             // fix hermetic void?
             if (!spell.IsResistable && spell.Category != SpellCategory.ManaConversionModLowering || spell.IsSelfTargeted)
-            //if (!spell.IsResistable || spell.IsSelfTargeted)
+                //if (!spell.IsResistable || spell.IsSelfTargeted)
                 return false;
 
             if (spell.MetaSpellType == SpellType.Dispel && spell.Align == DispelType.Negative && !PropertyManager.GetBool("allow_negative_dispel_resist").Item)
@@ -311,7 +311,6 @@ namespace ACE.Server.WorldObjects
                     break;
 
                 case SpellType.PortalRecall:
-
                     HandleCastSpell_PortalRecall(spell, targetCreature);
                     break;
 
@@ -522,7 +521,7 @@ namespace ACE.Server.WorldObjects
                         targetCreature.DamageHistory.Add(this, DamageType.Health, (uint)-boost);
 
                     //if (targetPlayer != null && targetPlayer.Fellowship != null)
-                        //targetPlayer.Fellowship.OnVitalUpdate(targetPlayer);
+                    //targetPlayer.Fellowship.OnVitalUpdate(targetPlayer);
 
                     break;
             }
@@ -775,7 +774,7 @@ namespace ACE.Server.WorldObjects
 
                     //var sourcePlayer = source as Player;
                     //if (sourcePlayer != null && sourcePlayer.Fellowship != null)
-                        //sourcePlayer.Fellowship.OnVitalUpdate(sourcePlayer);
+                    //sourcePlayer.Fellowship.OnVitalUpdate(sourcePlayer);
 
                     break;
             }
@@ -799,7 +798,7 @@ namespace ACE.Server.WorldObjects
 
                     //var destPlayer = destination as Player;
                     //if (destPlayer != null && destPlayer.Fellowship != null)
-                        //destPlayer.Fellowship.OnVitalUpdate(destPlayer);
+                    //destPlayer.Fellowship.OnVitalUpdate(destPlayer);
 
                     break;
             }
@@ -910,7 +909,7 @@ namespace ACE.Server.WorldObjects
                     damageType = DamageType.Health;
 
                     //if (player != null && player.Fellowship != null)
-                        //player.Fellowship.OnVitalUpdate(player);
+                    //player.Fellowship.OnVitalUpdate(player);
                 }
             }
 
@@ -1030,6 +1029,12 @@ namespace ACE.Server.WorldObjects
             if (player != null && player.IsOlthoiPlayer)
             {
                 player.Session.Network.EnqueueSend(new GameEventWeenieError(player.Session, WeenieError.OlthoiCanOnlyRecallToLifestone));
+                return;
+            }
+
+            if (IsInHellgate)
+            {
+                player.Session.Network.EnqueueSend(new GameMessageSystemChat("Your may not leave a hellgate until it has completed.", ChatMessageType.Broadcast));
                 return;
             }
 
@@ -1172,6 +1177,12 @@ namespace ACE.Server.WorldObjects
                 return;
             }
 
+            if (IsInHellgate)
+            {
+                player.Session.Network.EnqueueSend(new GameMessageSystemChat("Your may not leave a hellgate until it has completed.", ChatMessageType.Broadcast));
+                return;
+            }
+
             if (player != null && player.PKTimerActive)
             {
                 player.Session.Network.EnqueueSend(new GameEventWeenieError(player.Session, WeenieError.YouHaveBeenInPKBattleTooRecently));
@@ -1294,6 +1305,12 @@ namespace ACE.Server.WorldObjects
         {
             if (targetCreature is Player targetPlayer)
             {
+                if (IsInHellgate)
+                {
+                    targetPlayer.Session.Network.EnqueueSend(new GameMessageSystemChat("Your may not leave a hellgate until it has completed.", ChatMessageType.Broadcast));
+                    return;
+                }
+
                 if (targetPlayer.PKTimerActive)
                 {
                     targetPlayer.Session.Network.EnqueueSend(new GameEventWeenieError(targetPlayer.Session, WeenieError.YouHaveBeenInPKBattleTooRecently));
@@ -1336,6 +1353,12 @@ namespace ACE.Server.WorldObjects
 
             if (targetPlayer == null || targetPlayer.Fellowship == null)
                 return false;
+
+            if (IsInHellgate)
+            {
+                targetPlayer.Session.Network.EnqueueSend(new GameMessageSystemChat("Your may not leave a hellgate until it has completed.", ChatMessageType.Broadcast));
+                return false;
+            }
 
             if (targetPlayer.PKTimerActive)
             {
