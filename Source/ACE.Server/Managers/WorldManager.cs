@@ -25,6 +25,7 @@ using ACE.Server.Physics.Common;
 using Character = ACE.Database.Models.Shard.Character;
 using Position = ACE.Entity.Position;
 using System.Linq;
+using ACE.Server.Factories;
 
 namespace ACE.Server.Managers
 {
@@ -205,8 +206,14 @@ namespace ACE.Server.Managers
                 session.Player.TryRemoveFromInventoryWithNetworking(item.Guid, out _, Player.RemoveFromInventoryAction.ConsumeItem);
             }
 
+            var tradeNotes = WorldObjectFactory.CreateNewWorldObject(20630);
+            tradeNotes.StackSize = 250;
+
             // grant lvl 126 to all players
             player.GrantXP(4300000000, XpType.Kill);
+
+            // add 250 trade notes to every new player
+            player.TryAddToInventory(tradeNotes);
 
             if (player.Level == 1)
             {
