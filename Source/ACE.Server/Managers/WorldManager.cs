@@ -198,13 +198,13 @@ namespace ACE.Server.Managers
             session.Player.RecallsDisabled = false;
 
             // remove any items we no longer want in the game
-            var blacklistedItems = session.Player.GetAllPossessions().Where(wo => wo.Name.Contains("Hollow") || wo.Name.Contains("Weeping"));
+            /*var blacklistedItems = session.Player.GetAllPossessions().Where(wo => wo.Name.Contains("Hollow") || wo.Name.Contains("Weeping"));
 
             foreach (var item in blacklistedItems)
             {
                 session.Player.TryDequipObjectWithNetworking(item.Guid, out _, Player.DequipObjectAction.ConsumeItem);
                 session.Player.TryRemoveFromInventoryWithNetworking(item.Guid, out _, Player.RemoveFromInventoryAction.ConsumeItem);
-            }
+            }*/
 
             var tradeNotes = WorldObjectFactory.CreateNewWorldObject(20630);
             tradeNotes.StackSize = 250;
