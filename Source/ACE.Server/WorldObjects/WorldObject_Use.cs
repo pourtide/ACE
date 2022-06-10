@@ -201,9 +201,11 @@ namespace ACE.Server.WorldObjects
             if (!(activator is Player player))
                 return new ActivationResult(true);
 
+            /*
             // verify arcane lore requirement
             if (ItemDifficulty != null)
             {
+                // disable lore requirements for testing
                 var arcaneLore = player.GetCreatureSkill(Skill.ArcaneLore);
                 if (arcaneLore.Current < ItemDifficulty.Value)
                     return new ActivationResult(new GameEventWeenieErrorWithString(player.Session, WeenieErrorWithString.Your_IsTooLowToUseItemMagic, arcaneLore.Skill.ToSentence()));
@@ -222,6 +224,7 @@ namespace ACE.Server.WorldObjects
 
             if (UseRequiresSkill != null)
             {
+                // diable use requirements for testing
                 var skill = activator.ConvertToMoASkill((Skill)UseRequiresSkill.Value);
                 var playerSkill = player.GetCreatureSkill(skill);
 
@@ -283,7 +286,7 @@ namespace ACE.Server.WorldObjects
 
                 if (playerVital.MaxValue < ItemAttribute2ndLevelLimit)
                     return new ActivationResult(new GameEventWeenieErrorWithString(player.Session, WeenieErrorWithString.Your_IsTooLowToUseItemMagic, playerVital.Vital.ToSentence()));
-            }
+            }*/
 
             // Check for a cooldown
             if (!player.EnchantmentManager.CheckCooldown(CooldownId))

@@ -421,7 +421,7 @@
       "Description": "enables or disables global chat channels (General, LFG, Roleplay, Trade, Olthoi, Society, Allegience)"
     },
     "use_wield_requirements": {
-      "Item": true,
+      "Item": false,
       "Description": "disable this to bypass wield requirements. mostly for dev debugging"
     },
     "version_info_enabled": {
