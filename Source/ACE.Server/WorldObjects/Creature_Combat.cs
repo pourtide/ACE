@@ -643,8 +643,8 @@ namespace ACE.Server.WorldObjects
         public float GetShieldMod(WorldObject attacker, DamageType damageType, WorldObject weapon)
         {
             // ensure combat stance
-            if (CombatMode == CombatMode.NonCombat)
-                return 1.0f;
+            //if (CombatMode == CombatMode.NonCombat)
+                //return 1.0f;
 
             // does the player have a shield equipped?
             var shield = GetEquippedShield();
@@ -703,7 +703,7 @@ namespace ACE.Server.WorldObjects
             var shieldSkill = GetCreatureSkill(Skill.Shield);
             var shieldCap = shieldSkill.Current;
             if (shieldSkill.AdvancementClass != SkillAdvancementClass.Specialized)
-                shieldCap = (uint)Math.Round(shieldCap / 2.0f);
+                //shieldCap = (uint)Math.Round(shieldCap / 2.0f);
 
             effectiveLevel = Math.Min(effectiveLevel, shieldCap);
 

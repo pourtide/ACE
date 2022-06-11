@@ -625,6 +625,15 @@ namespace ACE.Server.WorldObjects
                         return AbsorbMagic(target, caster);
 
                     break;
+
+                case CombatMode.NonCombat:
+
+                    // does target have shield equipped?
+                    shield = target.GetEquippedShield();
+                    if (shield != null && shield.GetAbsorbMagicDamage() != null)
+                        return GetShieldMod(target, shield);
+
+                    break;
             }
             return 1.0f;
         }
@@ -648,13 +657,13 @@ namespace ACE.Server.WorldObjects
             // SpecMod = 1.0 for spec, 0.8 for trained
             // BaseSkill = 100 to 433 (above 433 base shield you always achieve the maximum %)
 
-            var shieldSkill = target.GetCreatureSkill(Skill.Shield);
+            /*var shieldSkill = target.GetCreatureSkill(Skill.Shield);
             // ensure trained?
             if (shieldSkill.AdvancementClass < SkillAdvancementClass.Trained || shieldSkill.Base < 100)
-                return 1.0f;
+                return 1.0f;*/
 
-            var baseSkill = Math.Min(shieldSkill.Base, 433);
-            var specMod = shieldSkill.AdvancementClass == SkillAdvancementClass.Specialized ? 1.0f : 0.8f;
+            var baseSkill = 433;
+            var specMod = 1.0f;
             var cap = (float)(shield.GetAbsorbMagicDamage() ?? 0.0f);
 
             // speced, 100 skill = 0%
