@@ -289,6 +289,7 @@ namespace ACE.Server.WorldObjects
 
         private void CloseHellgatePortal()
         {
+            HellgateManager.RemoveOpenPortal(Location.ToLOCString());
             DeleteObject();
         }
 

@@ -31,11 +31,30 @@ namespace ACE.Server.Command.Handlers
             CommandHandlerHelper.WriteOutputInfo(session, $"Current world population: {PlayerManager.GetOnlineCount():N0}", ChatMessageType.Broadcast);
         }
 
+        // hellgates
+        [CommandHandler("hellgates", AccessLevel.Player, CommandHandlerFlag.None, 0,
+            "Show current hellgate portals",
+            "")]
+        public static void HandleDungeons(Session session, params string[] parameters)
+        {
+            string message;
+
+            if (HellgateManager.OpenPortals.IsEmpty)
+            {
+                message = "There are currently no available hellgate portals open";
+            } else
+            {
+                message = $"The Current open hellgates are: {String.Join(", ", HellgateManager.OpenPortals.Select(d => d.Value.TownName))}";
+            }
+
+            CommandHandlerHelper.WriteOutputInfo(session, message, ChatMessageType.Broadcast);
+        }
+
         // dungeons
         [CommandHandler("dungeons", AccessLevel.Player, CommandHandlerFlag.None, 0,
             "Show current dungeons that are giving xp",
             "")]
-        public static void HandleDungeons(Session session, params string[] parameters)
+        public static void HandleHellgates(Session session, params string[] parameters)
         {
             var message = $"The Current areas giving xp are: {String.Join(", ", DungeonManager.XpLandblocks.Select(d => d.Value.Name))}";
             CommandHandlerHelper.WriteOutputInfo(session, message, ChatMessageType.Broadcast);
