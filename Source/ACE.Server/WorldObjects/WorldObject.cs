@@ -83,10 +83,10 @@ namespace ACE.Server.WorldObjects
         public bool IsCaster { get => DefaultCombatStyle != null && (DefaultCombatStyle == CombatStyle.Magic); }
 
         public bool IsInHellgate => Location != null ? Location.LandblockId.Landblock == 0x0287 : false;
-
-
+        public bool IsOnXpLandblock => Location != null ? DungeonManager.XpLandblocks.ContainsKey(Location.LandblockId.Landblock) : false;
 
         public EmoteManager EmoteManager;
+
         public EnchantmentManagerWithCaching EnchantmentManager;
 
         // todo: move these to a base projectile class

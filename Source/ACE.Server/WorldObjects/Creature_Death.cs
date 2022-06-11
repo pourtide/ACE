@@ -731,8 +731,6 @@ namespace ACE.Server.WorldObjects
 
         public bool IsOnNoDeathXPLandblock => Location != null ? NoDeathXP_Landblocks.Contains(Location.LandblockId.Landblock) : false;
 
-        public bool IsOnXpLandblock => Location != null ? DungeonManager.XpLandblocks.ContainsKey(Location.LandblockId.Landblock) : false;
-
         /// <summary>
         /// A list of landblocks the player gains no xp from creature kills
         /// </summary>
