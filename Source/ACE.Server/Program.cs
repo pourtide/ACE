@@ -303,11 +303,9 @@ namespace ACE.Server
             log.Info("Initializing EventManager...");
             EventManager.Initialize();
 
-            log.Info("Initializing DungeonManager...");
-            DungeonManager.Initialize();
+            log.Info("Initializing PourtideManager...");
+            PourtideManager.Initialize();
 
-            log.Info("Initializing HellgateManager...");
-            HellgateManager.Initialize();
 
             // Free up memory before the server goes online. This can free up 6 GB+ on larger servers.
             log.Info("Forcing .net garbage collection...");
