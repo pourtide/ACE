@@ -287,6 +287,9 @@ namespace ACE.Server.Factories
             {
                 var cantripLevel = CantripChance.RollCantripLevel(profile);
 
+                if (cantripLevel > 2)
+                    cantripLevel = 2;
+
                 var cantripLevels = SpellLevelProgression.GetSpellLevels(cantrip);
 
                 if (cantripLevels.Count != 4)
@@ -299,6 +302,11 @@ namespace ACE.Server.Factories
 
                 if (cantripLevel == 4)
                     hasLegendary = true;
+            }
+
+            if (!wo.IsOnXpLandblock)
+            {
+                wo.Retained = true;
             }
 
             // if a legendary cantrip dropped on this item
