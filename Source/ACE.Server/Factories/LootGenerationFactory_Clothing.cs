@@ -992,6 +992,8 @@ namespace ACE.Server.Factories
 
         private static bool TryMutateGearRating(WorldObject wo, TreasureDeath profile, TreasureRoll roll)
         {
+            return false; // no gear ratings on pourtide
+
             if (profile.Tier != 8)
                 return false;
 
