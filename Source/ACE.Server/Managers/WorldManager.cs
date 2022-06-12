@@ -420,8 +420,6 @@ namespace ACE.Server.Managers
 
                 worldTickTimer.Restart();
 
-                DungeonManager.Tick();
-
                 ServerPerformanceMonitor.RestartEvent(ServerPerformanceMonitor.MonitorType.PlayerManager_Tick);
                 PlayerManager.Tick();
                 ServerPerformanceMonitor.RegisterEventEnd(ServerPerformanceMonitor.MonitorType.PlayerManager_Tick);
