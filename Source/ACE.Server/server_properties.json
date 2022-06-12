@@ -517,7 +517,7 @@
   },
   "DoubleSettings": {
     "cantrip_drop_rate": {
-      "Item": 0,
+      "Item": 1,
       "Description": "Scales the chance for cantrips to drop in each tier. Defaults to 1.0, as per end of retail"
     },
     "minor_cantrip_drop_rate": {
