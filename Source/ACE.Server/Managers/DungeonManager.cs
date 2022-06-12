@@ -5,6 +5,7 @@ using log4net;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Timers;
 
@@ -16,24 +17,14 @@ namespace ACE.Server.Managers
 
         public static readonly ConcurrentDictionary<ushort, LandblockInformation> XpLandblocks = new ConcurrentDictionary<ushort, LandblockInformation>();
 
-        private static readonly TimeSpan DoWorkInterval = TimeSpan.FromMinutes(3);
-
-        private static DateTime LastDoWorkCheck;
-
         public static void Initialize()
         {
             LoadSmallPopLandblocks();
-            LastDoWorkCheck = DateTime.Now;
         }
 
         public static void Tick()
         {
-            var now = DateTime.UtcNow;
-            if (now - LastDoWorkCheck >= DoWorkInterval)
-            {
-                LastDoWorkCheck = now;
-                DoWork();
-            }
+            DoWork();
         }
 
         private static List<LandblockInformation> FetchSmallPopLandblocks = new List<LandblockInformation>()
@@ -63,10 +54,12 @@ namespace ACE.Server.Managers
             if (pop >= 30)
             {
                 LoadLargePopLandblocks();
-            } else if (pop >= 15)
+            }
+            else if (pop >= 15)
             {
                 LoadMedPopLandblocks();
-            } else
+            }
+            else
             {
                 LoadSmallPopLandblocks();
             }
@@ -76,12 +69,12 @@ namespace ACE.Server.Managers
         {
             var blacklisted = FetchLargePopLandblocks.Concat(FetchMedPopLandblocks);
 
-            foreach(var landblock in blacklisted)
+            foreach (var landblock in blacklisted)
             {
                 XpLandblocks.TryRemove(landblock.Block, out _);
             }
 
-            foreach(var landblock in FetchSmallPopLandblocks)
+            foreach (var landblock in FetchSmallPopLandblocks)
             {
                 XpLandblocks.TryAdd(landblock.Block, landblock);
             }
@@ -91,12 +84,12 @@ namespace ACE.Server.Managers
         {
             var blacklisted = FetchLargePopLandblocks;
 
-            foreach(var landblock in blacklisted)
+            foreach (var landblock in blacklisted)
             {
                 XpLandblocks.TryRemove(landblock.Block, out _);
             }
 
-            foreach(var landblock in FetchSmallPopLandblocks.Concat(FetchMedPopLandblocks))
+            foreach (var landblock in FetchSmallPopLandblocks.Concat(FetchMedPopLandblocks))
             {
                 XpLandblocks.TryAdd(landblock.Block, landblock);
             }
@@ -105,7 +98,7 @@ namespace ACE.Server.Managers
 
         private static void LoadLargePopLandblocks()
         {
-            foreach(var landblock in FetchSmallPopLandblocks.Concat(FetchMedPopLandblocks).Concat(FetchLargePopLandblocks))
+            foreach (var landblock in FetchSmallPopLandblocks.Concat(FetchMedPopLandblocks).Concat(FetchLargePopLandblocks))
             {
                 XpLandblocks.TryAdd(landblock.Block, landblock);
             }
