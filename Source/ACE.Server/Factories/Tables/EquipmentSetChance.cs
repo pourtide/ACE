@@ -40,6 +40,8 @@ namespace ACE.Server.Factories.Tables
 
         public static EquipmentSet? Roll(WorldObject wo, TreasureDeath profile, TreasureRoll roll)
         {
+            return null; // no set pieces on pourtide
+
             if (profile.Tier < 6 || !roll.HasArmorLevel(wo))
                 return null;
 
