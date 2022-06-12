@@ -304,11 +304,6 @@ namespace ACE.Server.Factories
                     hasLegendary = true;
             }
 
-            if (!wo.IsOnXpLandblock)
-            {
-                wo.Retained = true;
-            }
-
             // if a legendary cantrip dropped on this item
             if (hasLegendary && roll.ArmorType != TreasureArmorType.Society)
             {
