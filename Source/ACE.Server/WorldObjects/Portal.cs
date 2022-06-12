@@ -297,7 +297,7 @@ namespace ACE.Server.WorldObjects
         {
             var player = activator as Player;
 
-            if (HellgateManager.PlayerCount > HellgateManager.MaxPlayers)
+            if (HellgateManager.PlayersInHellgate.Count > HellgateManager.MaxPlayers)
             {
                 CloseHellgatePortal();
                 return false;
@@ -315,7 +315,7 @@ namespace ACE.Server.WorldObjects
 
             var members = fellowship.GetFellowshipMembers();
 
-            if (HellgateManager.PlayerCount + members.Count > HellgateManager.MaxPlayers)
+            if (HellgateManager.PlayersInHellgate.Count + members.Count > HellgateManager.MaxPlayers)
                 return false;
 
             var areMembersValid = CheckFellowshipMembers(members);
