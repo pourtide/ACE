@@ -102,6 +102,11 @@ namespace ACE.Server.WorldObjects
             if (!(activator is Player player))
                 return new ActivationResult(false);
 
+            if (!player.IsOnXpLandblock)
+            {
+                return new ActivationResult(false);
+            }
+
             if (IsLocked)
             {
                 EnqueueBroadcast(new GameMessageSound(Guid, Sound.OpenFailDueToLock, 1.0f));
