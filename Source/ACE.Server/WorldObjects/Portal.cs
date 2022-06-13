@@ -36,6 +36,8 @@ namespace ACE.Server.WorldObjects
         public Portal(Biota biota) : base(biota)
         {
             SetEphemeralValues();
+
+
         }
 
         protected void SetEphemeralValues()
@@ -304,9 +306,7 @@ namespace ACE.Server.WorldObjects
             }
 
             if (HellgateManager.ContainsPlayer(player))
-            {
                 return false;
-            }
 
             var fellowship = player.Fellowship;
 

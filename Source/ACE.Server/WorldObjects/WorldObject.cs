@@ -82,6 +82,8 @@ namespace ACE.Server.WorldObjects
         public bool IsRanged { get => IsAmmoLauncher || IsThrownWeapon; }
         public bool IsCaster { get => DefaultCombatStyle != null && (DefaultCombatStyle == CombatStyle.Magic); }
 
+        public bool IsInArwic => Location != null ? Location.LandblockId.Landblock == 0xC6A9 : false;
+
         public bool IsInHellgate => Location != null ? Location.LandblockId.Landblock == 0x0287 : false;
         public bool IsOnXpLandblock => Location != null ? DungeonManager.XpLandblocks.ContainsKey(Location.LandblockId.Landblock) : false;
 
