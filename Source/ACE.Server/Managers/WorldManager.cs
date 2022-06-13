@@ -206,15 +206,6 @@ namespace ACE.Server.Managers
                 session.Player.TryRemoveFromInventoryWithNetworking(item.Guid, out _, Player.RemoveFromInventoryAction.ConsumeItem);
             }*/
 
-            var tradeNotes = WorldObjectFactory.CreateNewWorldObject(20630);
-            tradeNotes.StackSize = 250;
-
-            // grant lvl 126 to all players
-            player.GrantXP(4300000000, XpType.Kill);
-
-            // add 250 trade notes to every new player
-            player.TryAddToInventory(tradeNotes);
-
             if (player.Level == 1)
             {
                 var onboardingPosition = LocToPosition("0xE3550014 [51.284737 72.112297 4.005000] -0.504449 0.000000 0.000000 0.863442");
