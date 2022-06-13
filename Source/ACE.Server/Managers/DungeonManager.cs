@@ -47,7 +47,6 @@ namespace ACE.Server.Managers
 
         private static void DoWork()
         {
-            log.Info("DungeonManager is scanning dungeons....");
 
             var pop = PlayerManager.GetOnlineCount();
 

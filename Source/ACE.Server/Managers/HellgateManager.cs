@@ -1,4 +1,3 @@
-using ACE.Common;
 using ACE.Entity;
 using ACE.Entity.Enum;
 using ACE.Server.Entity.Actions;
@@ -11,7 +10,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 
 namespace ACE.Server.Managers
 {
@@ -23,7 +21,7 @@ namespace ACE.Server.Managers
 
         public static int MaxPlayers = 12;
 
-        public static HellgateState State { get; private set; }
+        public static HellgateState State { get; private set; } = HellgateState.Closed;
 
         private static ConcurrentDictionary<uint, WorldObject> PortalInstances = new ConcurrentDictionary<uint, WorldObject>();
 
@@ -33,15 +31,17 @@ namespace ACE.Server.Managers
 
         public static void Initialize()
         {
-            State = HellgateState.Closed;
         }
 
         internal static void Tick()
         {
+            if (State == HellgateState.Shutdown)
+                return;
+
             DoWork();
         }
 
-        private static List<uint> HellgatePortalWcids = new List<uint>()
+        public static readonly List<uint> HellgatePortalWcids = new()
         {
             3000100,
             3000101,
@@ -51,9 +51,8 @@ namespace ACE.Server.Managers
 
         public enum HellgateState
         {
-            Open, Closed
+            Open, Closed, Shutdown
         }
-
 
         private static void DoWork()
         {
@@ -66,6 +65,12 @@ namespace ACE.Server.Managers
                     HandleIsOpen();
                     break;
             }
+        }
+
+        public static void Shutdown()
+        {
+            State = HellgateState.Shutdown;
+            CloseHellgate();
         }
 
         private static void HandleIsOpen()
@@ -87,6 +92,8 @@ namespace ACE.Server.Managers
 
         private static void OpenHellgate()
         {
+            State = HellgateState.Open;
+
             foreach (var player in PlayerManager.GetAllOnline())
             {
                 if (player.IsInHellgate)
@@ -100,11 +107,12 @@ namespace ACE.Server.Managers
             CreatePortalInstances();
             PlayersInHellgate.Clear();
             HellgateDungeonInterval.Start();
-            State = HellgateState.Open;
         }
 
         private static void CloseHellgate()
         {
+            State = HellgateState.Closed;
+
             foreach (var player in PlayerManager.GetAllOnline())
             {
                 if (player.IsInHellgate)
@@ -117,7 +125,6 @@ namespace ACE.Server.Managers
             DeletePortalInstances();
             PlayersInHellgate.Clear();
             HellgateDungeonInterval.Reset();
-            State = HellgateState.Closed;
         }
 
         private static void CreatePortalInstances()

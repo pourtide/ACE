@@ -128,6 +128,8 @@ namespace ACE.Server.Managers
             PropertyManager.ResyncVariables();
             PropertyManager.StopUpdating();
 
+            HellgateManager.Shutdown();
+
             WorldManager.EnqueueAction(new ActionEventDelegate(() =>
             {
                 log.Debug("Logging off all players...");
