@@ -76,10 +76,18 @@ namespace ACE.Server.WorldObjects
                 return;
             }
 
-            if (WeenieClassId == 4000228)
+            if (WeenieClassId == 4000228) // if hellgate escape gem 
             {
                 log.Info("Hellgate escape gem used, removing player from hellgate players list");
                 HellgateManager.RemovePlayer(player);
+                return;
+            }
+
+            if (WeenieClassId == 5000101) // if vitae removal gem
+            {
+                player.EnchantmentManager.RemoveVitae();
+                DeleteObject();
+                return;
             }
 
             // handle rare gems
