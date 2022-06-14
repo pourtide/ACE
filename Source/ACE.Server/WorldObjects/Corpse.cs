@@ -155,15 +155,6 @@ namespace ACE.Server.WorldObjects
             if (VictimId == null || player.Guid.Full == VictimId)
                 return true;
 
-
-            if (!player.IsOnXpLandblock)
-            {
-                if (KillerId != null && player.Guid.Full == KillerId && PkLevel == PKLevel.PK)
-                    return true;
-                else
-                    return false;
-            }
-
             // players can loot corpses of creatures they killed or corpses that have previously been looted by killer
             if (KillerId != null && player.Guid.Full == KillerId || IsLooted)
                 return true;
