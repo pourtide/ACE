@@ -71,7 +71,7 @@ namespace ACE.Server.WorldObjects
                 UpdateXpAllegiance(amount);
 
             // only certain types of XP are granted to items
-            if (xpType == XpType.Kill)
+            if (xpType == XpType.Kill || xpType == XpType.Quest)
                 GrantItemXP(amount);
         }
 
@@ -80,10 +80,6 @@ namespace ACE.Server.WorldObjects
         /// </summary>
         private void UpdateXpAndLevel(long amount, XpType xpType)
         {
-            if (xpType == XpType.Quest)
-            {
-                return;
-            }
             // until we are max level we must make sure that we send
             var xpTable = DatManager.PortalDat.XpTable;
 

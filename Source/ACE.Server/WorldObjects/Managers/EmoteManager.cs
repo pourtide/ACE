@@ -142,11 +142,6 @@ namespace ACE.Server.WorldObjects.Managers
                 case EmoteType.AwardNoShareXP:
                     if (player != null)
                     {
-                        if (creature.WeenieClassId == 3000381) // if this is pourman messenger, we allow xp 
-                        {
-                            player.EarnXP(emote.Amount64 ?? emote.Amount ?? 0, XpType.Kill, ShareType.None);
-                        }
-                        else
                             player.EarnXP(emote.Amount64 ?? emote.Amount ?? 0, XpType.Quest, ShareType.None);
                     }
                     
