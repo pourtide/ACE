@@ -80,13 +80,14 @@ namespace ACE.Server.WorldObjects
             {
                 log.Info("Hellgate escape gem used, removing player from hellgate players list");
                 HellgateManager.RemovePlayer(player);
+                player.TryConsumeFromInventoryWithNetworking(4000228, 1);
                 return;
             }
 
             if (WeenieClassId == 5000101) // if vitae removal gem
             {
                 player.EnchantmentManager.RemoveVitae();
-                DeleteObject();
+                player.TryConsumeFromInventoryWithNetworking(5000101, 1);
                 return;
             }
 
