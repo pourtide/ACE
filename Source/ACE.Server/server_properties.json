@@ -813,11 +813,11 @@
       "Description": "The cap on what proportion of armor can be reduced on missile AR. Should be between 0 and 1. Default is 0.6 for a 60% reduction in armor."
     },
     "phantom_shield_damage_multi": {
-      "Item": 2,
+      "Item": 1,
       "Description": "The damage multiplier done by phantom weapons vs shields. Default is 1.0x"
     },
     "phantom_damage_multi": {
-      "Item": 2,
+      "Item": 1,
       "Description": "The damage multiplier done by phantom weapons vs armor. Default is 1.0x"
     }
   },
