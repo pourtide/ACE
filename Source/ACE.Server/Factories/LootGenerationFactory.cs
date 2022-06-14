@@ -1084,6 +1084,8 @@ namespace ACE.Server.Factories
 
             var wo = CreateAndMutateWcid(treasureDeath, treasureRoll, category == TreasureItemCategory.MagicItem);
 
+            wo.RemoveWieldRequirements();
+            
             return wo;
         }
 

@@ -149,8 +149,10 @@ namespace ACE.Server.WorldObjects
             SetEphemeralValues();
             InitializeGenerator();
             InitializeHeartbeats();
+            RemoveWieldRequirements();
 
             CreationTimestamp = (int)Time.GetUnixTime();
+
         }
 
         /// <summary>
@@ -168,6 +170,25 @@ namespace ACE.Server.WorldObjects
             SetEphemeralValues();
             InitializeGenerator();
             InitializeHeartbeats();
+            RemoveWieldRequirements();
+        }
+
+        public void RemoveWieldRequirements()
+        {
+            ItemDifficulty = null;
+            WieldDifficulty = null;
+            WieldDifficulty2 = null;
+            WieldDifficulty3 = null;
+            WieldDifficulty4 = null;
+            UseRequiresLevel = null;
+            UseRequiresSkill = null;
+            UseRequiresSkillSpec = null;
+            UseRequiresSkillLevel = null;
+            ItemSkillLevelLimit = null;
+            WieldRequirements = WieldRequirement.Invalid;
+            WieldRequirements2 = WieldRequirement.Invalid;
+            WieldRequirements3 = WieldRequirement.Invalid;
+            WieldRequirements4 = WieldRequirement.Invalid;
         }
 
         public bool BumpVelocity { get; set; }
