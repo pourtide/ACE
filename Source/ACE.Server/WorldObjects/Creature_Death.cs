@@ -621,6 +621,12 @@ namespace ACE.Server.WorldObjects
             set { if (!value) RemoveProperty(PropertyBool.CanGenerateRare); else SetProperty(PropertyBool.CanGenerateRare, value); }
         }
 
+        public readonly List<uint> BlacklistedCreatureDeathLoot = new() // loot that cannot drop outside of xp landblocks
+        {
+            6876, // sturdy iron key
+            24477, // sturdy steel key
+        };
+
         /// <summary>
         /// Transfers generated treasure from creature to corpse
         /// </summary>
@@ -691,6 +697,11 @@ namespace ACE.Server.WorldObjects
                     }
                     else
                     {
+                        if (!IsOnXpLandblock && BlacklistedCreatureDeathLoot.Contains(item.WeenieClassId))
+                        {
+                            wo = null;
+                            break;
+                        }
                         wo = WorldObjectFactory.CreateNewWorldObject(item);
                     }
 
