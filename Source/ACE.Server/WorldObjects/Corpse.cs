@@ -156,9 +156,9 @@ namespace ACE.Server.WorldObjects
                 return true;
 
 
-            if (!player.IsOnXpLandblock && KillerId != null && PkLevel == PKLevel.PK)
+            if (!player.IsOnXpLandblock)
             {
-                if (player.Guid.Full == KillerId)
+                if (KillerId != null && player.Guid.Full == KillerId && PkLevel == PKLevel.PK)
                     return true;
                 else
                     return false;
