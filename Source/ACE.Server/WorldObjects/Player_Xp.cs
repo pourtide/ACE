@@ -302,7 +302,7 @@ namespace ACE.Server.WorldObjects
 
             if (Level == 15) // at lvl 15 teleport to martines retreat
             {
-                var location = "0x566001BC [87.567162 -32.466179 6.005000] 0.923626 0.000000 0.000000 -0.383295";
+                var location = "0x56600159 [98.732254 -1.066586 0.005000] -0.967491 0.000000 0.000000 -0.252905";
                 var position = WorldManager.LocToPosition(location);
                 Sanctuary = position;
                 SavePlayerToDatabase();
