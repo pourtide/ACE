@@ -34,6 +34,7 @@ namespace ACE.Server.Managers.Pourtide
             new LandblockInformation(0x0287, "Hellgate"),
             new LandblockInformation(0x02BC, "Mosswart Nest"),
             new LandblockInformation(0x5660, "Martine's Retreat"),
+            new LandblockInformation(0x01C9, "Subway"),
         };
 
         private static List<LandblockInformation> FetchMedPopLandblocks = new List<LandblockInformation>()
