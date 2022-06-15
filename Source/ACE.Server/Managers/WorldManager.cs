@@ -208,7 +208,8 @@ namespace ACE.Server.Managers
 
             if (player.Level == 1)
             {
-                var onboardingPosition = LocToPosition("0xE3550014 [51.284737 72.112297 4.005000] -0.504449 0.000000 0.000000 0.863442");
+                var onboardingPosition = LocToPosition("0x02BC0147 [115.193947 -50.042538 0.005000] -0.097086 0.000000 0.000000 0.995276");
+
 
                 session.Player.Sanctuary = onboardingPosition;
                 session.Player.Location = onboardingPosition;

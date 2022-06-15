@@ -46,6 +46,9 @@ namespace ACE.Server.WorldObjects
             if (!(worldObject is Player player))
                 return;
 
+            if (!IsInMartinesRetreat)
+                return;
+
             var actionChain = new ActionChain();
             if (player.CombatMode != CombatMode.NonCombat)
             {

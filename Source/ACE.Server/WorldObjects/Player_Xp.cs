@@ -300,6 +300,15 @@ namespace ACE.Server.WorldObjects
                 }
             }
 
+            if (Level == 15) // at lvl 15 teleport to martines retreat
+            {
+                var location = "0x566001BC [87.567162 -32.466179 6.005000] 0.923626 0.000000 0.000000 -0.383295";
+                var position = WorldManager.LocToPosition(location);
+                Sanctuary = position;
+                SavePlayerToDatabase();
+            }
+                //WorldManager.ThreadSafeTeleport(this, WorldManager.LocToPosition())
+
             if (Level > startingLevel)
             {
                 var message = (Level == maxLevel) ? $"You have reached the maximum level of {Level}!" : $"You are now level {Level}!";
