@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace ACE.Server.Managers
+namespace ACE.Server.Managers.Pourtide
 {
     public static class HellgateManager
     {
@@ -145,7 +145,7 @@ namespace ACE.Server.Managers
                 WorldManager.EnqueueAction(new ActionEventDelegate(() => wo.EnterWorld()));
             }
 
-            var message = $"The current open hellgate portals are: {String.Join(", ", OpenPortals.Select(d => d.Value.TownName))}.";
+            var message = $"The current open hellgate portals are: {string.Join(", ", OpenPortals.Select(d => d.Value.TownName))}.";
 
             PlayerManager.BroadcastToAll(new GameMessageSystemChat(message, ChatMessageType.WorldBroadcast));
         }
@@ -205,7 +205,7 @@ namespace ACE.Server.Managers
 
         public static string HellgateTimeRemaining()
         {
-            var span = TimeSpan.FromMilliseconds((1000 * 60 * 30) - HellgateDungeonInterval.ElapsedMilliseconds);
+            var span = TimeSpan.FromMilliseconds(1000 * 60 * 30 - HellgateDungeonInterval.ElapsedMilliseconds);
             return string.Format("{0}:{1:00}", (int)span.TotalMinutes, span.Seconds);
         }
 

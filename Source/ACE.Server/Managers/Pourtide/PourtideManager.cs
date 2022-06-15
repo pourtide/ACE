@@ -13,7 +13,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
-namespace ACE.Server.Managers
+namespace ACE.Server.Managers.Pourtide
 {
     public static class PourtideManager
     {
@@ -23,8 +23,12 @@ namespace ACE.Server.Managers
 
         private static Stopwatch PourtideWorkerInterval = new Stopwatch();
 
+        private static long TickRate;
+
+
         public static void Initialize()
         {
+            TickRate = PropertyManager.GetLong("pourtide_tick_rate").Item;
             PourtideWorkerInterval.Start();
 
             log.Info("Initializing HellgateManager...");
@@ -36,7 +40,7 @@ namespace ACE.Server.Managers
             _workerThread = new Timer((_) =>
             {
                 DoWork();
-                _workerThread.Change(1000 * 60, Timeout.Infinite);
+                _workerThread.Change(1000 * TickRate, Timeout.Infinite);
             }, null, 0, Timeout.Infinite);
 
         }
@@ -44,10 +48,11 @@ namespace ACE.Server.Managers
         private static void DoWork()
         {
             var elapsedMiliseconds = PourtideWorkerInterval.ElapsedMilliseconds;
-            if (elapsedMiliseconds >= 1000 * 60) // tick every minute
+            if (elapsedMiliseconds >= 1000 * TickRate)
             {
                 HellgateManager.Tick();
                 DungeonManager.Tick();
+                //RadiationManager.Tick();
 
             }
 

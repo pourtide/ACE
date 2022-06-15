@@ -9,7 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Timers;
 
-namespace ACE.Server.Managers
+namespace ACE.Server.Managers.Pourtide
 {
     public static class DungeonManager
     {
@@ -33,6 +33,7 @@ namespace ACE.Server.Managers
             new LandblockInformation(0x02F0, "Lin Citadel"),
             new LandblockInformation(0x0287, "Hellgate"),
             new LandblockInformation(0x02BC, "Mosswart Nest"),
+            new LandblockInformation(0x5660, "Martine's Retreat"),
         };
 
         private static List<LandblockInformation> FetchMedPopLandblocks = new List<LandblockInformation>()
