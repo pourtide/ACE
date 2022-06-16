@@ -213,6 +213,12 @@ namespace ACE.Server.Managers
                 session.Player.Sanctuary = onboardingPosition;
                 session.Player.Location = onboardingPosition;
                 ThreadSafeTeleport(player, onboardingPosition);
+
+
+                // create oil of rendering so noobs don't just drop a wand
+                var oilOfRendering = WorldObjectFactory.CreateNewWorldObject(12711);
+                player.TryAddToInventory(oilOfRendering);
+
             }
 
             if (stripAdminProperties) // continue stripping properties
