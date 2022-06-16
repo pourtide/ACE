@@ -195,7 +195,7 @@ namespace ACE.Server.Managers
 
             session.SetPlayer(player);
 
-            session.Player.RecallsDisabled = false;
+            session.Player.RecallsDisabled = true;
 
             // remove any items we no longer want in the game
             /*var blacklistedItems = session.Player.GetAllPossessions().Where(wo => wo.Name.Contains("Hollow") || wo.Name.Contains("Weeping"));
