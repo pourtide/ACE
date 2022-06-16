@@ -39,7 +39,7 @@ namespace ACE.Server.Managers.Pourtide
 
         private static List<LandblockInformation> FetchMedPopLandblocks = new List<LandblockInformation>()
         {
-            new LandblockInformation(0x0103, "Obsidian Plains BSD"),
+            new LandblockInformation(0x0105, "Teth BSD"),
         };
 
         private static List<LandblockInformation> FetchLargePopLandblocks = new List<LandblockInformation>()
