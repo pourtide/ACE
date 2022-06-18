@@ -633,7 +633,7 @@
       "Description": "Scales the amount of damage players take from Void Magic. Defaults to 0.5, as per retail. For earlier content where DRR isn\u0027t as readily available, this can be adjusted for balance."
     },
     "xp_modifier": {
-      "Item": 3,
+      "Item": 1,
       "Description": "scales the amount of xp received by players"
     },
     "spell_damage_modifier": {
