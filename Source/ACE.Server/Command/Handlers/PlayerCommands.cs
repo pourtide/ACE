@@ -66,6 +66,26 @@ namespace ACE.Server.Command.Handlers
             CommandHandlerHelper.WriteOutputInfo(session, message, ChatMessageType.Broadcast);
         }
 
+        // vitae removal gems
+        [CommandHandler("vitae", AccessLevel.Player, CommandHandlerFlag.None, 0,
+            "Players receive 3 vitae removal gems per hour",
+            "")]
+        public static void HandleVitaeRemovalGems(Session session, params string[] parameters)
+        {
+            var player = session.Player;
+
+            if (VitaeManager.GivePlayerVitaeRemovalGem(player))
+            {
+                var message = "A new vitae removal gem has been added to your inventory.";
+                CommandHandlerHelper.WriteOutputInfo(session, message, ChatMessageType.Broadcast);
+            } else
+            {
+                var message = "You are not able to receive a vitae removal gem.";
+                CommandHandlerHelper.WriteOutputInfo(session, message, ChatMessageType.Broadcast);
+            }
+
+        }
+
         // quest info (uses GDLe formatting to match plugin expectations)
         [CommandHandler("myquests", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, "Shows your quest log")]
         public static void HandleQuests(Session session, params string[] parameters)

@@ -53,7 +53,7 @@ namespace ACE.Server.Managers.Pourtide
                 HellgateManager.Tick();
                 DungeonManager.Tick();
                 RadiationManager.Tick();
-
+                VitaeManager.Tick();
             }
 
             PourtideWorkerInterval.Restart();
