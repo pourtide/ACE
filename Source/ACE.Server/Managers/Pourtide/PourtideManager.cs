@@ -50,7 +50,7 @@ namespace ACE.Server.Managers.Pourtide
             var elapsedMiliseconds = PourtideWorkerInterval.ElapsedMilliseconds;
             if (elapsedMiliseconds >= 1000 * TickRate)
             {
-                HellgateManager.Tick();
+                //HellgateManager.Tick();
                 DungeonManager.Tick();
                 RadiationManager.Tick();
                 VitaeManager.Tick();
