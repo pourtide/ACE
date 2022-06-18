@@ -688,22 +688,7 @@ namespace ACE.Server.WorldObjects
                 {
                     WorldObject wo;
 
-                    if (WhitelistedLandblockTrophies.Contains(item.WeenieClassId) && IsOnXpLandblock)
-                    {
-                        if (item.WeenieClassId == 19478 || item.WeenieClassId == 7043 || item.WeenieClassId == 29204)
-                            wo = WorldObjectFactory.CreateNewWorldObject(3000382);
-                        else
-                            wo = WorldObjectFactory.CreateNewWorldObject(3000380);
-                    }
-                    else
-                    {
-                        if (!IsOnXpLandblock && BlacklistedCreatureDeathLoot.Contains(item.WeenieClassId))
-                        {
-                            wo = null;
-                            break;
-                        }
-                        wo = WorldObjectFactory.CreateNewWorldObject(item);
-                    }
+                    wo = WorldObjectFactory.CreateNewWorldObject(item);
 
                     if (wo != null)
                     {
